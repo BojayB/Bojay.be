@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+<link rel="stylesheet" href="/sakura-vader2.css" type="text/css">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">  
+
+<title>Welcome to Bojab Site!</title>
+
+
+<style>
+
+body {
+  font-size: 1.8rem;
+  line-height: 1.618;
+  max-width: 44em;
+  margin: auto;
+  color: #d9d8dc;
+  background-color: #120c0e;
+  padding: 10px;
+}
+
+div.hdn{
+	position:absolute;
+	top: 0px;
+	left: 0px;
+}
+
+
+a.hdnlink{
+	color: #120c0e; 
+	text-decoration: none;
+	border-bottom: none;
+}
+
+
+.navbar {
+  overflow: hidden;
+}
+
+.navbar a {
+  font-size: 16px;
+  color: rgb(235,153,161);
+  padding: 5px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-bottom: none;
+}
+
+.navbar a:hover {
+  color: #DA4453
+}
+
+.footer { 
+  font-size: 16px;
+  color: rgb(235,153,161);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.title {
+  position:fixed;
+  left: 300px;
+  /* Fallback: Set a background color. */
+  background-color: #eb99a1;
+background: radial-gradient(circle at var(--x) var(--y) -45%, rgba(255, 255, 255, 0.7), transparent 30%);
+  
+  
+  
+
+  /* Use the text as a mask for the background. */
+  /* This will show the gradient as a text color rather than element bg. */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; 
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent;
+}
+
+
+.light{
+  position; fixed;
+left:255px;
+background-color: #eb99a1;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.title:hover {
+  background-color: #DA4453
+}
+
+</style>
+
+
+
+</head>
+<body>
+
+<header>
+<!--<div class="card">-->
+<a href="/"><h1 class='title'>Bojab Website</h1></a>
+<div class='title'></div>
+<script type="text/javascript">
+
+  var pos = document.documentElement;
+  pos.addEventListener('mousemove', e =>{
+    
+    pos.style.setProperty('--x', e.clientX + 'px')
+    pos.style.setProperty('--y', e.clientY + 'px')
+    
+  })
+
+</script>
+
+</header>
+</body>
+</html>
