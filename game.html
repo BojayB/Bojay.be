@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soul Movement with Collision and Camera</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbars */
+            background-color: #f0f0f0;
+        }
+
+        #gameArea {
+            position: relative;
+            width: 100vw; /* Width of the game world */
+            height: 100vh; /* Height of the game world */
+        }
+
+        #soul {
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        /* Example rectangle shape */
+        .rectangle {
+            position: absolute;
+            background-color: red;
+        }
+
+        .controls {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+        .contr1{
+    position: fixed;
+    bottom: 230px; 
+    left: 230px;
+    display: flex;
+    flex-direction: row;
+    
+}
+
+button {
+    width: 200px;
+    height: 200px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+    </style>
+</head>
+<body>
+
+    <div id="gameArea">
+        <div id="soul"></div>
+
+        <!-- Rectangles for collision -->
+        <div class="rectangle" style="left: 300px; top: 200px; width: 150px; height: 100px;"></div>
+        <div class="rectangle" style="left: 800px; top: 500px; width: 200px; height: 150px;"></div>
+        <!-- Add more rectangles as needed -->
+    </div>
+
+
+<div class="controls">
+    <button id="leftButton">←</button>
+    <button id="downButton">↓</button>
+    <button id="rightButton">→</button>
+</div>
+<div class="contr1">
+    <button id="upButton">↑</button>
+    </div>
+
+
+
+    <script>
+        const soul = document.getElementById('soul');
+    const rectangles = document.querySelectorAll('.rectangle'); // Get all rectangles
+    const gameArea = document.getElementById('gameArea');
+
+// Set the initial position of the soul
+let position = {
+    x: (gameArea.offsetWidth - soul.offsetWidth) / 2,
+    y: (gameArea.offsetHeight - soul.offsetHeight) / 2
+};
+
+
+// Update the soul's position
+soul.style.left = position.x + 'px';
+soul.style.top = position.y + 'px';
+
+let velocity = {
+    x: 0,
+    y: 0
+};
+
+        const maxSpeed = 5;
+        const acceleration = 0.08;
+        const friction = 0.04;
+        const reboundFactor = 0.8;  // Controls how much the soul bounces back
+        const bounceDamping = 0.9;  // Controls how quickly the bouncing reduces
+
+
+        const keys = {
+            up: false,
+            down: false,
+            left: false,
+            right: false
+        };
+
+        // Function to detect rectangle collision
+        function checkCollision(rect) {
+            const rectBounds = rect.getBoundingClientRect();
+            const soulBounds = soul.getBoundingClientRect();
+
+            return !(soulBounds.right < rectBounds.left || 
+                     soulBounds.left > rectBounds.right || 
+                     soulBounds.bottom < rectBounds.top || 
+                     soulBounds.top > rectBounds.bottom);
+        }
+
+
+
+// Function to keep the soul within the game area and handle collisions
+function handleCollisions() {
+    rectangles.forEach(rect => {
+        if (checkCollision(rect)) {
+            const soulRect = soul.getBoundingClientRect();
+            const rectBounds = rect.getBoundingClientRect();
+
+            // Determine how much to move the soul out of the rectangle
+            let offsetX = 0;
+            let offsetY = 0;
+
+            if (soulRect.right > rectBounds.left && velocity.x > 0) {
+                offsetX = soulRect.right - rectBounds.left; // Collision from the left
+            } else if (soulRect.left < rectBounds.right && velocity.x < 0) {
+                offsetX = soulRect.left - rectBounds.right; // Collision from the right
+            }
+
+            if (soulRect.bottom > rectBounds.top && velocity.y > 0) {
+                offsetY = soulRect.bottom - rectBounds.top; // Collision from the top
+            } else if (soulRect.top < rectBounds.bottom && velocity.y < 0) {
+                offsetY = soulRect.top - rectBounds.bottom; // Collision from the bottom
+            }
+
+            // Apply the smaller offset to prevent snapping
+            if (Math.abs(offsetX) < Math.abs(offsetY)) {
+                // Horizontal collision
+                position.x -= offsetX; // Push out horizontally
+                velocity.x = 0; // Reset horizontal velocity
+            } else {
+                // Vertical collision
+                position.y -= offsetY; // Push out vertically
+                velocity.y = 0; // Reset vertical velocity
+            }
+        }
+    });
+}
+
+        
+
+        // Function to update the camera position (moving the game area to center the soul)
+        function updateCamera() {
+            const soulCenterX = position.x + soul.offsetWidth / 2;
+            const soulCenterY = position.y + soul.offsetHeight / 2;
+
+            const offsetX = Math.max(0, Math.min(gameArea.offsetWidth - window.innerWidth, soulCenterX - window.innerWidth / 2));
+            const offsetY = Math.max(0, Math.min(gameArea.offsetHeight - window.innerHeight, soulCenterY - window.innerHeight / 2));
+
+            // Move the game area (scroll effect)
+            gameArea.style.transform = `translate(${-offsetX}px, ${-offsetY}px)`;
+        }
+
+        // Update loop
+        function update() {
+            let targetX = 0;
+            let targetY = 0;
+
+            // Determine movement direction
+            if (keys.up && !keys.down) targetY = -maxSpeed;
+            if (keys.down && !keys.up) targetY = maxSpeed;
+            if (keys.left && !keys.right) targetX = -maxSpeed;
+            if (keys.right && !keys.left) targetX = maxSpeed;
+
+            // Diagonal movement correction
+            if (targetX !== 0 && targetY !== 0) {
+                targetX *= 0.7071; // 1 / √2
+                targetY *= 0.7071;
+            }
+
+            // Smooth acceleration
+            velocity.x += (targetX - velocity.x) * acceleration;
+            velocity.y += (targetY - velocity.y) * acceleration;
+
+            // Apply friction if no key is pressed
+            if (targetX === 0) velocity.x *= (1 - friction);
+            if (targetY === 0) velocity.y *= (1 - friction);
+
+            // Update position based on velocity
+            position.x += velocity.x;
+            position.y += velocity.y;
+
+            // Handle collisions
+            handleCollisions();
+
+            // Check for collision with the left or right edge
+if (position.x <= 0) {
+    position.x = 0;  // Prevent going beyond the left edge
+    velocity.x = -velocity.x * reboundFactor;  // Invert direction and apply rebound
+    velocity.x *= bounceDamping;  // Reduce velocity gradually
+} else if (position.x + soul.offsetWidth >= gameArea.offsetWidth) {
+    position.x = gameArea.offsetWidth - soul.offsetWidth;  // Prevent going beyond the right edge
+    velocity.x = -velocity.x * reboundFactor;
+    velocity.x *= bounceDamping;
+}
+
+// Check for collision with the top or bottom edge
+if (position.y <= 0) {
+    position.y = 0;  // Prevent going beyond the top edge
+    velocity.y = -velocity.y * reboundFactor;
+    velocity.y *= bounceDamping;
+} else if (position.y + soul.offsetHeight >= gameArea.offsetHeight) {
+    position.y = gameArea.offsetHeight - soul.offsetHeight;  // Prevent going beyond the bottom edge
+    velocity.y = -velocity.y * reboundFactor;
+    velocity.y *= bounceDamping;
+}
+
+
+            // Update the soul's position
+            soul.style.left = position.x + 'px';
+            soul.style.top = position.y + 'px';
+
+            // Update the camera to center on the soul
+            updateCamera();
+
+            requestAnimationFrame(update);
+        }
+
+        update();
+
+        
+        // Handle key down events
+        function keyDownHandler(event) {
+            switch (event.key) {
+                case 'ArrowUp':
+                    keys.up = true;
+                    break;
+                case 'ArrowDown':
+                    keys.down = true;
+                    break;
+                case 'ArrowLeft':
+                    keys.left = true;
+                    break;
+                case 'ArrowRight':
+                    keys.right = true;
+                    break;
+            }
+        }
+
+        // Handle key up events
+        function keyUpHandler(event) {
+            switch (event.key) {
+                case 'ArrowUp':
+                    keys.up = false;
+                    break;
+                case 'ArrowDown':
+                    keys.down = false;
+                    break;
+                case 'ArrowLeft':
+                    keys.left = false;
+                    break;
+                case 'ArrowRight':
+                    keys.right = false;
+                    break;
+            }
+        }
+
+
+        //Mobile Controles
+        // Functions to simulate key press events
+function simulateKeyDown(key) {
+    keyDownHandler({ key: key });
+}
+
+function simulateKeyUp(key) {
+    keyUpHandler({ key: key });
+}
+
+// Button event listeners
+document.getElementById('upButton').addEventListener('touchstart', function() {
+    simulateKeyDown('ArrowUp');
+});
+document.getElementById('upButton').addEventListener('touchend', function() {
+    simulateKeyUp('ArrowUp');
+});
+
+document.getElementById('downButton').addEventListener('touchstart', function() {
+    simulateKeyDown('ArrowDown');
+});
+document.getElementById('downButton').addEventListener('touchend', function() {
+    simulateKeyUp('ArrowDown');
+});
+
+document.getElementById('leftButton').addEventListener('touchstart', function() {
+    simulateKeyDown('ArrowLeft');
+});
+document.getElementById('leftButton').addEventListener('touchend', function() {
+    simulateKeyUp('ArrowLeft');
+});
+
+document.getElementById('rightButton').addEventListener('touchstart', function() {
+    simulateKeyDown('ArrowRight');
+});
+document.getElementById('rightButton').addEventListener('touchend', function() {
+    simulateKeyUp('ArrowRight');
+});
+
+
+
+        window.addEventListener('keydown', keyDownHandler);
+        window.addEventListener('keyup', keyUpHandler);
+    </script>
+</body>
+</html>

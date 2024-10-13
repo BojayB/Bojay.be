@@ -1,0 +1,23 @@
+// Smooth camera follow
+const smoothFactor = 0.1; // Adjust this value to change the smoothing effect
+
+function updateCamera() {
+    const soulCenterX = position.x + soul.offsetWidth / 2;
+    const soulCenterY = position.y + soul.offsetHeight / 2;
+
+    // Calculate target camera position
+    const targetX = Math.max(0, Math.min(gameArea.offsetWidth - window.innerWidth, soulCenterX - window.innerWidth / 2));
+    const targetY = Math.max(0, Math.min(gameArea.offsetHeight - window.innerHeight, soulCenterY - window.innerHeight / 2));
+
+    // Smoothly interpolate camera position
+    const currentTransform = gameArea.style.transform.match(/translate\((-?\d+)px, (-?\d+)px\)/);
+    let currentX = currentTransform ? parseFloat(currentTransform[1]) : 0;
+    let currentY = currentTransform ? parseFloat(currentTransform[2]) : 0;
+
+    // Update camera position with smoothing
+    const newX = currentX + (targetX - currentX) * smoothFactor;
+    const newY = currentY + (targetY - currentY) * smoothFactor;
+
+    // Apply the new transform
+    gameArea.style.transform = `translate(${-newX}px, ${-newY}px)`;
+}

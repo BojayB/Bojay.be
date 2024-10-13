@@ -1,87 +1,157 @@
+
 <!DOCTYPE html>
-<html>
-  <head>
+
+<html lang="en">
+<head>
+
+
+<link rel="stylesheet" href="/sakura-vader.css" type="text/css">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">  
+
+<title>Welcome to Bojab Site!</title>
+
+
 <style>
-div.hdn {
-	position:absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-	overflow: hidden;
-}
 
-a.hdnlink {
-	color: rgba(0, 0, 0, 0.1); 
-	text-decoration: none;
-	border-bottom: none;
-}
-
-a { text-decoration: none; }
-
-  @font-face {
+@font-face {
     font-family: "Helvetica Bold";
     src: url(/fonts/HelveticaRoundedBold.ttf);
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-fanimly: 'Helvetica Bold';
-  }
-  
-  section {
-    position: relative;
-    min-height: 100%;
-    max-width: 100%;
-    background: #000000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  section h2 {
-    max-width: 100%;
-    font-family: 'Helvetica Bold';
-    color: #fff;
-    font-size: 15em;
-    cursor: default;
-  }
-  
-.light {
-  
- position: fixed;
- top: 0;
- left: -45%;
- width: 100%;
- height: 100%;
- pointer-events: none;
- background: radial-gradient(circle at var(--x) var(--y), transparent 10%, rgba(0,0,0,0.95) 20%);
-  
+body {
+  font-size: 1.8rem;
+  line-height: 1.618;
+  max-width: 48.5em;
+  margin: auto;
+  color: #d9d8dc;
+  background-color: #120c0e;
+  padding: 10px;
 }
-  
+
+div.hdn{
+	position:absolute;
+	top: 0px;
+	left: 0px;
+}
+
+
+a.hdnlink{
+	color: #120c0e; 
+	text-decoration: none;
+	border-bottom: none;
+}
+
+
+
+.navbar {
+  overflow: hidden;
+}
+
+.navbar a {
+  font-size: 16px;
+  color: rgb(235,153,161);
+  padding: 5px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-bottom: none;
+}
+
+.navbar a:hover {
+  color: #DA4453
+}
+
+.footer { 
+  font-size: 16px;
+  color: rgb(235,153,161);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+
+
+.joe {
+font-family: Helvetica Bold, sans-serif;
+}
+
+.mouse-cursor-gradient-tracking {
+  position: relative;
+  height: 1.2em;
+  background: black;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: #eb99a1;
+  border: none;
+  color: purple;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.mouse-cursor-gradient-tracking span {
+  position: relative;
+}
+
+.mouse-cursor-gradient-tracking:before {
+  --size: 0;
+  content: '';
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--size);
+  height: var(--size);
+  -webkit-mask: text;
+  background: radial-gradient(circle closest-side, rgba(218, 68, 83, 0.75), transparent);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+  z-index: 2;
+}
+
+.mouse-cursor-gradient-tracking:hover::before {
+  --size: 100px;
+}
+
+
 </style>
+
 
 
 </head>
 <body>
-<div class=hdn>
-<a href="yduhm.html">
-<section> <h2 class='crt'>THESCREAMIN.A,JDHFGLKJASDJ D;LFKUJAW;SDL KFJA;LSKDJFKL;JA SHDLKGJFHDXFKJHG HKJHSDHFGK HSDLFKGDSFG MACHINE</h2> </section>
-  <div class='light'></div>
-  <script type="text/javascript">
 
-  var pos = document.documentElement;
-  pos.addEventListener('mousemove', e =>{
-    
-    pos.style.setProperty('--x', e.clientX + 'px')
-    pos.style.setProperty('--y', e.clientY + 'px')
-    
-  })
+<header>
+<a href="/"><h1 class="mouse-cursor-gradient-tracking"><span>Bojab Website</span></h1>
+<script type="text/javascript">
 
-</script>
-</a>
-</div>
+  let btn = document.querySelector('.mouse-cursor-gradient-tracking');
+btn.addEventListener('mousemove', e => {
+  let rect = e.target.getBoundingClientRect();
+  let x = e.clientX - rect.left;
+  let y = e.clientY - rect.top;
+  btn.style.setProperty('--x', x + 'px');
+  btn.style.setProperty('--y', y + 'px');
+});
 
+</script></a>
+<p>Simple as frick. <small>Now With Audio!</small> <a class="hdnlink" href="/gone.html">O</a> </p>
+
+
+<div class="navbar">
+  <a href="/"><h3><small>Home</small></h3></a>
+  <a href="/about.html"><h3><small>About</small></h3></a>
+  <a href="/social.html"><h3><small>Social</small></h3></a>
+  <a href="blog.html"><h3><small>Blog</small></h3></a>
+  <a href="mal.html"><h3><small>MAL</small></h3></a>
+  <a href="music.html"><h3><small>Loops</small></h3></a>
+  <a href="discord.html"><h3><small>Discord</small></h3></a>
+  <a href="https://soundcloud.com/vinyl_lover20" target="_blank"><h3><small>Soundcloud</small></h3></a>
+  <a href="https://paypal.me/LiamDaws0n?locale.x=en_US" target="_blank"><h3><small>Support</small></h3></a>
+  <a href="/BOS/escapism.html"><h3 class="joe"><small>GTFBI</small></h3></a>
+  
+
+</div>  
+
+</header><hr>
 
   </body>

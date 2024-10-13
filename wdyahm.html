@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+<link rel="shortcut icon" href="/images/BOS_icon.jpg" type="image/x-icon">
+<style>
+body { 
+    white-space: nowrap;
+    overflow: hidden;
+    background-image: url(/images/BOS_hero.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;  
+}
+div.hdn {
+	position:absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	min-height: 100%;
+	min-width: 100%;
+	margin: auto;
+}
+
+a.hdnlink {
+	color: rgba(0, 0, 0, 0.1); 
+	text-decoration: none;
+	border-bottom: none;
+}
+
+a { text-decoration: none; }
+
+  @font-face {
+    font-family: "Helvetica Bold";
+    src: url(/fonts/HelveticaRoundedBold.ttf);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-fanimly: 'Helvetica Bold';
+  }
+  
+  section {
+    position: relative;
+    min-height: 100%;
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  section h2 {
+    font-family: 'Helvetica Bold';
+    color: #ffffff;
+    font-size: 9vw;
+    cursor: default;
+  }
+  
+  .light {
+  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(ellipse 150% 100% at center, transparent 0%, rgba(0, 0, 0, 0.85) 45%, rgba(0, 0, 0, 1) 95%);
+   
+ }
+
+h2.crt {
+background: url(/images/crtnot.jpg) 0 0 / cover no-repeat;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+  
+</style>
+  </head>
+  <body>
+<audio id='audioIntro' autoplay src="/audio/TSMINTRO.wav"></audio>
+<script>
+var actx = new (AudioContext || webkitAudioContext)(),
+    src = "audio/wdyahm.flac",
+    audioData, srcNode;  // global so we can access them from handlers
+
+// Load some audio (CORS need to be allowed or we won't be able to decode the data)
+fetch(src, {mode: "cors"}).then(function(resp) {return resp.arrayBuffer()}).then(decode);
+
+// Decode the audio file, then start the show
+function decode(buffer) {
+  actx.decodeAudioData(buffer, playLoop);
+}
+
+// Sets up a new source node as needed as stopping will render current invalid
+function playLoop(abuffer) {
+  if (!audioData) audioData = abuffer;  // create a reference for control buttons
+  srcNode = actx.createBufferSource();  // create audio source
+  srcNode.buffer = abuffer;             // use decoded buffer
+  srcNode.connect(actx.destination);    // create output
+  srcNode.loop = true;                  // takes care of perfect looping
+  audioIntro.onended = function () {
+  srcNode.start();                      // play...
+  };
+};
+</script>
+<div class=hdn>
+<a href="ilikeyouok.html">
+<section> <h2 class='crt'>THE SCREAMING MACHINE</h2> </section>
+  <div class='light'></div>
+
+</a>
+</div>
+
+
+  </body>
+</html>

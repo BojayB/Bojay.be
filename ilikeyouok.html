@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+<link rel="shortcut icon" href="/images/BOS_icon.jpg" type="image/x-icon">
+<style>
+body { 
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: black;
+}
+div.hdn {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  max-width:100%;
+  max-height:100%;
+  margin:auto;
+
+}
+
+a.hdnlink {
+	color: rgba(0, 0, 0, 0.1); 
+	text-decoration: none;
+	border-bottom: none;
+}
+
+a { text-decoration: none; }
+
+  @font-face {
+    font-family: "Helvetica Bold";
+    src: url(/fonts/HelveticaRoundedBold.ttf);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-fanimly: 'Helvetica Bold';
+  }
+  
+  section {
+    position: relative;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  section h2 {
+    font-family: 'Helvetica Bold';
+    color: #fff;
+    font-size: 9vw;
+    cursor: default;
+  }
+
+
+  
+</style>
+  </head>
+  <body>
+<audio id='audioIntro' autoplay src="/audio/ilikeyouokaystart.flac"></audio>
+<script>
+var actx = new (AudioContext || webkitAudioContext)(),
+    src = "audio/ilikeyouok.flac",
+    audioData, srcNode;  // global so we can access them from handlers
+
+// Load some audio (CORS need to be allowed or we won't be able to decode the data)
+fetch(src, {mode: "cors"}).then(function(resp) {return resp.arrayBuffer()}).then(decode);
+
+// Decode the audio file, then start the show
+function decode(buffer) {
+  actx.decodeAudioData(buffer, playLoop);
+}
+
+// Sets up a new source node as needed as stopping will render current invalid
+function playLoop(abuffer) {
+  if (!audioData) audioData = abuffer;  // create a reference for control buttons
+  srcNode = actx.createBufferSource();  // create audio source
+  srcNode.buffer = abuffer;             // use decoded buffer
+  srcNode.connect(actx.destination);    // create output
+  srcNode.loop = true;                  // takes care of perfect looping
+  audioIntro.onended = function () {
+  srcNode.start();                      // play...
+  };
+};
+</script>
+<div class=hdn>
+<a href="flacpipeline.html">
+<img src="images/berdlycorech1.png">
+</a>
+</div>
+
+
+  </body>
+</html>

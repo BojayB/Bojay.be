@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<style>
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+body {
+	background-color: #000000;
+}
+div.textbig {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 315%;
+	text-decoration: none;
+	color: #FFFFFF;
+	
+}
+div.textreg {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	
+	font-size: 100%;
+	text-decoration: none;
+	color: #FFFFFF;
+	
+}
+</style>
+</head>
+<body>
+
+<script>
+var actx = new (AudioContext || webkitAudioContext)(),
+    src = "audio/theyveleft.mp3",
+    audioData, srcNode;  // global so we can access them from handlers
+
+// Load some audio (CORS need to be allowed or we won't be able to decode the data)
+fetch(src, {mode: "cors"}).then(function(resp) {return resp.arrayBuffer()}).then(decode);
+
+// Decode the audio file, then start the show
+function decode(buffer) {
+  actx.decodeAudioData(buffer, playLoop);
+}
+
+// Sets up a new source node as needed as stopping will render current invalid
+function playLoop(abuffer) {
+  if (!audioData) audioData = abuffer;  // create a reference for control buttons
+  srcNode = actx.createBufferSource();  // create audio source
+  srcNode.buffer = abuffer;             // use decoded buffer
+  srcNode.connect(actx.destination);    // create output
+  srcNode.loop = true;                  // takes care of perfect looping
+  srcNode.start();                      // play...
+};
+</script>
+
+<div class="middle">
+<a href="microphone.html">
+<img src="../images/theyregone.png" height=30% width=30%>
+</a>
+</div>
+<div class="textbig">
+<center> The website's Gone! </center>
+</div>
+<div class="textreg">
+<center> I can't believe it's gone missing </center>
+</div>
