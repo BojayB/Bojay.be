@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/sakura-vader.css" type="text/css">
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">  
+    
     <title>My Anime List</title>
     <style>
         body {
@@ -29,55 +28,35 @@
             pointer-events: none;
         }
   /* Table styling */
-  /* Styling for the title */
-.page-header {
-  position: fixed; /* Keeps the title always on top */
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #333;
-  color: white;
-  padding: 10px;
-  text-align: center;
-  z-index: 10;
-}
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
 
-/* Ensure content starts below the title */
-.content {
-  padding-top: 60px; /* Space for the fixed title bar */
-}
-
-/* Table styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-/* Make the header sticky */
-thead th {
-  position: sticky;
-  top: 60px; /* Adjust this based on your layout */
-  background-color: #f2f2f2;
-  z-index: 2;
-}
-
-/* Optional: Add shadow effect for better visibility */
-thead th::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background-color: #ddd;
-  z-index: 1;
-}
+  /* Make the header sticky */
+  thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    z-index: 2;
+  }
+  
+  /* Optional: Add a shadow effect for better visibility */
+  thead th::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #ddd;
+    z-index: 1;
+  }
 
   /* Table row hover effect */
   tr:hover {
