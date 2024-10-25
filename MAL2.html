@@ -4,11 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/sakura-vader.css" type="text/css">
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">  
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">  
     <title>My Anime List</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-size: 1.8rem;
+            line-height: 1.618;
+            max-width: 100vw;
+            overflow-x: hidden;
+            margin: auto;
+            color: #d9d8dc;
+            background-color: #120c0e;
+            padding: 10px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .anime-table {
             width: 100%;
@@ -20,7 +32,7 @@
             text-align: left;
         }
         .anime-table th {
-            background-color: #f4f4f4;
+            background-color: #120c0e;
         }
         .status-check {
             text-align: center;
@@ -28,53 +40,106 @@
         .status-check input {
             pointer-events: none;
         }
-  /* Table styling */
-  table {
+        
+        /* Table styling */
+
+/* General Table Layout */
+/* General Table Layout */
+table {
     width: 100%;
+    table-layout: fixed; /* Columns take up equal space */
     border-collapse: collapse;
-  }
-  
-  th, td {
+}
+
+td, th {
+    padding: 10px;
     border: 1px solid #ddd;
-    padding: 8px;
-  }
+    text-align: center;
+    vertical-align: middle; /* Vertically center content */
+    word-wrap: break-word; /* Prevent long text from overflowing */
+    overflow: hidden; /* Prevent overflow of content */
+}
 
-  /* Make the header sticky */
-  thead th {
-    position: sticky;
-    top: 0;
-    background-color: #120c0e;
-    z-index: 2;
-  }
-  
-  /* Optional: Add a shadow effect for better visibility */
-  thead th::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background-color: #ddd;
-    z-index: 1;
-  }
+/* Ensure images fit properly in cells */
+td img {
+    max-width: 80%; /* Make sure image fits within the cell */
+    height: auto; /* Maintain aspect ratio */
+    display: block;
+    margin: 0 auto; /* Center image in cell */
+}
 
-  /* Table row hover effect */
-  tr:hover {
-    background-color: #1f0c0f;
-  }
+/* Fix body width issues */
+body {
+    max-width: 100vw;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
 
-</style>
+/* For smaller screens */
+@media (max-width: 600px) {
+    td img {
+        max-width: 50px; /* Smaller image size on mobile */
+    }
 
+    td, th {
+        padding: 5px; /* Adjust padding for small screens */
+    }
+}
+        
+        
+        
+        
+        .navbar {
+  overflow: hidden;
+}
+
+.navbar a {
+  font-size: 16px;
+  color: rgb(235,153,161);
+  padding: 3px 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-bottom: none;
+}
+
+.navbar a:hover {
+  color: #DA4453
+}
+
+
+.joe {
+font-family: Helvetica Bold, sans-serif;
+}
+    </style>
 </head>
 <body>
+<header>
+<a href="/"><h1>Bojab Website</h1></a>
+<p>Simple as frick.</p>
 
-<h1>My Anime List</h1>
 
-<table>
+<div class="navbar">
+  <a href="/"><h3><small>Home</small></h3></a>
+  <a href="/about.html"><h3><small>About</small></h3></a>
+  <a href="/social.html"><h3><small>Social</small></h3></a>
+  <a href="blog.html"><h3><small>Blog</small></h3></a>
+  <a href="mal.html"><h3><small>MAL</small></h3></a>
+  <a href="music.html"><h3><small>Loops</small></h3></a>
+  <a href="discord.html"><h3><small>Discord</small></h3></a>
+  <a href="https://soundcloud.com/vinyl_lover20" target="_blank"><h3><small>Soundcloud</small></h3></a>
+  <a href="https://paypal.me/LiamDaws0n?locale.x=en_US" target="_blank"><h3><small>Support</small></h3></a>
+  <hr>
+
+</div>  
+
+</header>
+
+<h1>Here is My Anime List :)</h1>
+<p><small>It's kinda difficult to comprehend on mobile, but it's good <i>enough</i>, so whatever.</small></p>
+<table class="anime-table">
   <thead>
     <tr>
-      <th>Anime Name</th>
+      <th>Cover Image</th> <!-- Change column header -->
       <th>Status</th>
       <th>Episodes</th>
       <th>Watching</th>
@@ -88,7 +153,6 @@
     <!-- Anime rows will be dynamically inserted here -->
   </tbody>
 </table>
-
 <script>
     async function fetchAnimeList() {
         const query = `
@@ -138,17 +202,26 @@
     }
 
     function displayAnimeList(lists) {
-    const animeListElement = document.getElementById('anime-list');
-    animeListElement.innerHTML = ''; // Clear previous list
+        const animeListElement = document.getElementById('anime-list');
+        animeListElement.innerHTML = ''; // Clear previous list
 
-    lists.forEach(list => {
-        list.entries.forEach(entry => {
-            console.log(entry.media.title.romaji, entry.status); // Log the title and user-specific status
+        // Define the desired order of statuses
+        const statusOrder = ['CURRENT', 'COMPLETED', 'PAUSED', 'DROPPED', 'PLANNING'];
 
+        // Flatten all entries from lists
+        const allEntries = lists.flatMap(list => list.entries);
+
+        // Sort the entries based on the status order
+        const sortedEntries = allEntries.sort((a, b) => {
+            return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+        });
+
+        // Loop through the sorted entries and create table rows
+        sortedEntries.forEach(entry => {
             const animeRow = document.createElement('tr');
 
-            // Anime title and link
-            const animeTitleCell = `<td><a href="${entry.media.siteUrl}" target="_blank">${entry.media.title.romaji}</a></td>`;
+            // Anime cover image cell
+            const coverImageCell = `<td><a href="${entry.media.siteUrl}" target="_blank"><img src="${entry.media.coverImage.large}" alt="${entry.media.title.romaji} cover"></a></td>`;
             
             // User-specific status text
             const statusTextCell = `<td>${entry.status}</td>`;
@@ -165,7 +238,7 @@
 
             // Create row with all the data
             animeRow.innerHTML = `
-                ${animeTitleCell}
+                ${coverImageCell}
                 ${statusTextCell}
                 ${episodesCell}
                 ${statusCheckCell('CURRENT')}
@@ -177,11 +250,10 @@
 
             animeListElement.appendChild(animeRow);
         });
-    });
-}
+    }
 
     fetchAnimeList();
 </script>
-
+<p>Damn, it was about 6 years ago today I watched Assassination Classroom and never touched it again. I remember watching it and putting it at number 3 in my favourites list at the time knowing well that that opinion would change after forgetting about the show, which happened, but it's crazy how it's been 6 years already.</p>
 </body>
 </html>
