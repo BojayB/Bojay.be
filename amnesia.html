@@ -4,7 +4,7 @@
 <style>
 div.hdn {
 	position:absolute;
-	top: 0px;
+	top: 100px;
 	left: 0px;
 	right: 0px;
 	bottom: 0px;
@@ -19,34 +19,28 @@ a.hdnlink {
 
 
 </style>
+</head>
+<body>
+<script src="aecho-audio-engine.js"></script>
 
-
-
-  </head>
-  <body>
 <script>
-var actx = new (AudioContext || webkitAudioContext)(),
-    src = "audio/amnesia.flac",
-    audioData, srcNode;  // global so we can access them from handlers
-
-// Load some audio (CORS need to be allowed or we won't be able to decode the data)
-fetch(src, {mode: "cors"}).then(function(resp) {return resp.arrayBuffer()}).then(decode);
-
-// Decode the audio file, then start the show
-function decode(buffer) {
-  actx.decodeAudioData(buffer, playLoop);
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/AEchoL.mp3",
+    
+    autoLoop: true,
+    hasExit: true,
+    strictTiming: false,
+  });
 }
-
-// Sets up a new source node as needed as stopping will render current invalid
-function playLoop(abuffer) {
-  if (!audioData) audioData = abuffer;  // create a reference for control buttons
-  srcNode = actx.createBufferSource();  // create audio source
-  srcNode.buffer = abuffer;             // use decoded buffer
-  srcNode.connect(actx.destination);    // create output
-  srcNode.loop = true;                  // takes care of perfect looping
-  srcNode.start();                      // play...
-};
 </script>
+
+<div class="abs">
+  <button class="button" onclick="startAEcho()">Click here for audio</button>
+  <button class="button" onclick="AEchoAudioEngine.stop()">Stop after loop</button>
+</div>
+
 <div class=hdn>
 <a href="kobaryo.html">
 <img src="images/pixelterroramnesia.jpg" width=100% height=100%>
@@ -55,3 +49,4 @@ function playLoop(abuffer) {
 
 
   </body>
+</html>

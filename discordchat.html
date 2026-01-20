@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord Messages Display</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #36393f;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: #2f3136;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .message {
+      background-color: #40444b;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .username {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #7289da;
+    }
+
+    .content {
+      margin-bottom: 10px;
+    }
+
+    .attachments img, .attachments video {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    .attachments a {
+      color: #00b0f4;
+      text-decoration: none;
+      margin-top: 5px;
+      display: inline-block;
+    }
+
+    .attachments {
+      margin-top: 10px;
+    }
+
+    .message-time {
+      font-size: 0.85em;
+      color: #72767d;
+      align-self: flex-end;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Discord Messages</h1>
+    <div id="messages"></div>
+  </div>
+
+  <script>
+    // Example data simulating Discord messages
+    const messages = [
+      {
+        username: "User1",
+        content: "Hey everyone, check this out!",
+        time: "2025-04-02T10:00:00Z",
+        attachments: [
+          {
+            type: 'image',
+            url: 'https://via.placeholder.com/600x400.png',
+          },
+          {
+            type: 'link',
+            url: 'https://www.example.com'
+          }
+        ]
+      },
+      {
+        username: "User2",
+        content: "Here's a cool video!",
+        time: "2025-04-02T11:00:00Z",
+        attachments: [
+          {
+            type: 'video',
+            url: 'https://www.w3schools.com/html/mov_bbb.mp4'
+          }
+        ]
+      },
+      {
+        username: "User3",
+        content: "Check this out! A funny meme",
+        time: "2025-04-02T12:30:00Z",
+        attachments: [
+          {
+            type: 'image',
+            url: 'https://via.placeholder.com/400x400.jpg',
+          }
+        ]
+      }
+    ];
+
+    // Function to display messages
+    function displayMessages() {
+      const messagesContainer = document.getElementById('messages');
+      messagesContainer.innerHTML = '';  // Clear any existing messages
+
+      messages.forEach((message) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+
+        // Username and content
+        messageDiv.innerHTML = `
+          <div class="username">${message.username}</div>
+          <div class="content">${message.content}</div>
+        `;
+
+        // Attachments (if any)
+        if (message.attachments.length > 0) {
+          const attachmentsDiv = document.createElement('div');
+          attachmentsDiv.classList.add('attachments');
+
+          message.attachments.forEach(attachment => {
+            if (attachment.type === 'image') {
+              const img = document.createElement('img');
+              img.src = attachment.url;
+              attachmentsDiv.appendChild(img);
+            } else if (attachment.type === 'video') {
+              const video = document.createElement('video');
+              video.src = attachment.url;
+              video.controls = true;
+              attachmentsDiv.appendChild(video);
+            } else if (attachment.type === 'link') {
+              const link = document.createElement('a');
+              link.href = attachment.url;
+              link.target = "_blank";
+              link.textContent = "View Link";
+              attachmentsDiv.appendChild(link);
+            }
+          });
+
+          messageDiv.appendChild(attachmentsDiv);
+        }
+
+        // Message time
+        const timeDiv = document.createElement('div');
+        timeDiv.classList.add('message-time');
+        timeDiv.textContent = new Date(message.time).toLocaleString();
+        messageDiv.appendChild(timeDiv);
+
+        messagesContainer.appendChild(messageDiv);
+      });
+    }
+
+    // Call the function to display the messages
+    displayMessages();
+  </script>
+
+</body>
+</html>

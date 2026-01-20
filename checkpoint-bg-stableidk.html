@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkpoint-style Dithered Background</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050109; /* deep dark purple-ish */
+    }
+
+    #bg {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      image-rendering: pixelated;   /* keep it crunchy */
+      image-rendering: crisp-edges;
+    }
+    
+    #paletteToggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  background: rgba(10, 10, 20, 0.85);
+  color: #f0eaff;
+  border: 1px solid rgba(200, 180, 255, 0.4);
+  border-radius: 999px;
+  cursor: pointer;
+  z-index: 10;
+}
+#paletteToggle:hover {
+  background: rgba(30, 20, 50, 0.9);
+}
+
+  </style>
+</head>
+<body>
+<button id="paletteToggle">Toggle Palette</button>
+
+  <canvas id="bg"></canvas>
+
+
+
+
+  <script>
+    const canvas = document.getElementById("bg");
+    const ctx = canvas.getContext("2d");
+
+    // We render at a low "logical" resolution and upscale it.
+    const LOGICAL_WIDTH  = 480;
+    const LOGICAL_HEIGHT = 270;
+
+    const offscreen = document.createElement("canvas");
+    offscreen.width  = LOGICAL_WIDTH;
+    offscreen.height = LOGICAL_HEIGHT;
+    const offctx = offscreen.getContext("2d");
+    let imageData = offctx.createImageData(LOGICAL_WIDTH, LOGICAL_HEIGHT);
+    let pixels = imageData.data;
+
+    // 8x8 Bayer matrix for ordered dithering (values 0–63).
+    const BAYER_8 = [
+      [ 0, 48, 12, 60,  3, 51, 15, 63],
+      [32, 16, 44, 28, 35, 19, 47, 31],
+      [ 8, 56,  4, 52, 11, 59,  7, 55],
+      [40, 24, 36, 20, 43, 27, 39, 23],
+      [ 2, 50, 14, 62,  1, 49, 13, 61],
+      [34, 18, 46, 30, 33, 17, 45, 29],
+      [10, 58,  6, 54,  9, 57,  5, 53],
+      [42, 26, 38, 22, 41, 25, 37, 21]
+    ];
+
+    function resizeCanvas() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+
+// =====================
+// Palette A: original sine-based
+// =====================
+function paletteA(bright, yNorm) {
+  // Slight vertical tint shift so top/bottom feel different.
+  const yShift = (yNorm - 0.5) * 0.4;
+
+  // Base dark blue/purple tones, using sine to mix it up.
+  const r = 19 + 40 * Math.sin(6.283 * (bright * 0.8 + 0.15 + yShift));
+  const g = 30 + 35 * Math.sin(6.283 * (bright * 0.7 + 0.55 - yShift));
+  const b = 47 + 90 * Math.sin(6.283 * (bright * 1.1 + 0.05));
+
+  return [
+    Math.max(0, Math.min(255, r)),
+    Math.max(0, Math.min(255, g)),
+    Math.max(0, Math.min(255, b))
+  ];
+}
+
+// =====================
+// Palette B: shadow → highlight (your creepy one)
+// =====================
+const SHADOW_COLOR = { r: 5,   g: 20,  b: 40  };   // very dark bluish
+const HIGHLIGHT_COLOR = { r: 255, g: 220, b: 255 }; // pale, almost white-pink
+
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
+
+function paletteB(bright, yNorm) {
+  // Optionally tilt brightness slightly with vertical position:
+  const vTilt = (yNorm - 0.5) * 0.2;  // subtle
+  let t = bright + vTilt;
+  t = Math.max(0, Math.min(1, t));    // clamp to 0–1
+
+  const r = lerp(SHADOW_COLOR.r, HIGHLIGHT_COLOR.r, t);
+  const g = lerp(SHADOW_COLOR.g, HIGHLIGHT_COLOR.g, t);
+  const b = lerp(SHADOW_COLOR.b, HIGHLIGHT_COLOR.b, t);
+
+  return [r, g, b];
+}
+
+// =====================
+// Palette mixer: A → B
+// =====================
+let paletteMix = 0; // 0 = pure A, 1 = pure B
+
+function palette(bright, yNorm) {
+  const cA = paletteA(bright, yNorm);
+  const cB = paletteB(bright, yNorm);
+
+  const t = paletteMix; // how far we are between A and B
+
+  const r = cA[0] + (cB[0] - cA[0]) * t;
+  const g = cA[1] + (cB[1] - cA[1]) * t;
+  const b = cA[2] + (cB[2] - cA[2]) * t;
+
+  return [r, g, b];
+}
+
+
+
+
+
+
+
+//PALETTE TOGGLE
+
+const paletteToggleBtn = document.getElementById("paletteToggle");
+let targetPaletteMix = 0;
+
+function animatePaletteTransition(toValue) {
+  const duration = 1200; // ms
+  const startValue = paletteMix;
+  const startTime = performance.now();
+
+  function step(now) {
+    const t = Math.min(1, (now - startTime) / duration);
+    // Ease in-out curve (smoother than linear)
+    const eased = t * t * (3 - 2 * t);
+
+    paletteMix = startValue + (toValue - startValue) * eased;
+
+    if (t < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+paletteToggleBtn.addEventListener("click", () => {
+  // Flip target between 0 and 1
+  targetPaletteMix = targetPaletteMix === 0 ? 1 : 0;
+  animatePaletteTransition(targetPaletteMix);
+});
+
+
+
+
+
+
+
+
+
+
+
+    function render(timeMs) {
+      const t = timeMs * 0.001; // seconds
+      let i = 0;
+
+      for (let y = 0; y < LOGICAL_HEIGHT; y++) {
+        const ny = y / LOGICAL_HEIGHT - 0.5;
+        for (let x = 0; x < LOGICAL_WIDTH; x++) {
+          const nx = x / LOGICAL_WIDTH - 0.5;
+
+          // --- Base field: layered sine waves for soft “plasma” motion ---
+          let v = 0;
+          v += Math.sin((nx * 4.0 + t * 0.15) * Math.PI * 2);
+          v += Math.sin((ny * 5.0 - t * 0.09) * Math.PI * 2);
+          v += Math.sin(((nx + ny) * 3.0 + t * 0.08) * Math.PI * 2);
+          v += Math.sin(((nx - ny) * 6.0 - t * 0.08) * Math.PI * 2);
+          v /= 4;  // normalize back to roughly -1..1
+
+          // Map to 0–1 brightness.
+          let bright = 0.5 + 0.5 * v;
+
+          // Add subtle grain so the dithering looks more “alive”.
+          const noise = (Math.random() - 0.5) * 0.10; // ±0.05
+          bright = Math.max(0, Math.min(1, bright + noise));
+
+          // --- Ordered dithering using Bayer matrix ---
+          const bx = x & 7;
+          const by = y & 7;
+          const threshold = (BAYER_8[by][bx] + 0.5) / 64; // 0..1
+          // Push brightness towards 0 or 1 based on threshold.
+          const dithered = bright + (bright - threshold) * 0.35;
+          const finalB = Math.max(0, Math.min(1, dithered));
+
+          const [r, g, b] = palette(finalB, ny + 0.5);
+
+          pixels[i++] = r;
+          pixels[i++] = g;
+          pixels[i++] = b;
+          pixels[i++] = 255; // alpha
+        }
+      }
+
+      offctx.putImageData(imageData, 0, 0);
+
+      // Draw scaled up to fill the screen, preserving aspect ratio.
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const scale = Math.max(
+        canvas.width / LOGICAL_WIDTH,
+        canvas.height / LOGICAL_HEIGHT
+      );
+      const drawW = LOGICAL_WIDTH * scale;
+      const drawH = LOGICAL_HEIGHT * scale;
+      const dx = (canvas.width  - drawW) * 0.5;
+      const dy = (canvas.height - drawH) * 0.5;
+
+      ctx.save();
+      ctx.globalAlpha = globalAlpha; // 0.0-1.0, controlled my slider
+      ctx.drawImage(offscreen, dx, dy, drawW, drawH);
+      ctx.restore();
+
+      requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+  </script>
+</body>
+</html>

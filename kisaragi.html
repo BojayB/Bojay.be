@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Kisagiri by Camellia</title>
+<script src="aecho.js"></script>
+<body>
+
+<script src="aecho.js"></script>
+
+<style>
+
+.button {
+      position: center;
+  border: none;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 40px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+  </style>
+
+<div class="hdn">
+  <a href="ihsts.html"><img src="../images/uufo.jpg" height="100%"></a>
+</div>
+
+<div class="abs">
+  <button class="button" onclick="startAEcho()">Click here for audio</button>
+  <button class="button" onclick="AEchoAudioEngine.stop()">Stop after loop</button>
+</div>
+<p>not sure why the outro is higher quality, all edited and exported with the same software and settings...</p>
+<script>
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/kisagiriI.mp3",
+    loop: "../audio/kisagiril.mp3",
+    exit: "../audio/kisaragiE.mp3",
+    autoLoop: true,
+    hasExit: true,
+    strictTiming: false,
+    title: "Kisaragi"
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SUBLIM8</title>
+<script src="aecho.js"></script>
+<body>
+
+<script src="aecho.js"></script>
+
+<div class="hdn">
+  <a href="knt.html"><img src="../images/sxth2.jpg" height="100%"></a>
+</div>
+
+<div class="abs">
+  <button class="button" onclick="startAEcho()">Click here for audio</button>
+  <button class="button" onclick="AEchoAudioEngine.stop()">Stop after loop</button>
+</div>
+
+<script>
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/SUBLIM8I.mp3",
+    loop: "../audio/SUBLIM8L.mp3",
+    exit: "",
+    autoLoop: true,
+    hasExit: false,
+    strictTiming: false,
+    title: "SUBLIM8"
+  });
+}
+</script>
+
+</body>
+</html>

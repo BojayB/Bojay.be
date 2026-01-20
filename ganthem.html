@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>giratina anthem</title>
+  <style>
+    body { overflow: hidden; margin: 0; }
+    .hdn {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+    }
+    .abs { position: absolute;
+    bottom: 10px; right: 10px;
+    }
+    .button {
+      position: center;
+  border: none;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 40px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+  </style>
+</head>
+<body>
+
+<script>
+const actx = new (window.AudioContext || window.webkitAudioContext)();
+
+const introSrc = "../audio/ganthemi.mp3";
+const loopSrc = "../audio/gantheml.mp3";
+
+let introBuffer, loopBuffer;
+
+async function loadAudio(url) {
+  const response = await fetch(url);
+  const arrayBuffer = await response.arrayBuffer();
+  return await actx.decodeAudioData(arrayBuffer);
+}
+
+async function initAudio() {
+  // Load both files in parallel
+  [introBuffer, loopBuffer] = await Promise.all([
+    loadAudio(introSrc),
+    loadAudio(loopSrc)
+  ]);
+
+  // Play both with perfect timing
+  const now = actx.currentTime;
+
+  const introSource = actx.createBufferSource();
+  introSource.buffer = introBuffer;
+  introSource.connect(actx.destination);
+  introSource.start(now); // play immediately
+
+  const loopSource = actx.createBufferSource();
+  loopSource.buffer = loopBuffer;
+  loopSource.loop = true;
+  loopSource.connect(actx.destination);
+  loopSource.start(now + introBuffer.duration); // schedule loop to start right after intro ends
+}
+
+window.addEventListener('click', () => {
+  if (actx.state === 'suspended') actx.resume();
+  initAudio();
+}, { once: true }); // autoplay policy workaround
+
+</script>
+
+<div class="hdn">
+  <a href="AnEch.html"><img src="../images/ganthem.jpg" height="100%"></a>
+</div>
+
+<div class="abs">
+ <button class="button">Click here for audio</button> 
+</div>
+
+</body>
+</html>

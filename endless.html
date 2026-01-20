@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+<link rel="shortcut icon" href="/images/BOS_icon.jpg" type="image/x-icon">
+<style>
+body { 
+    overflow: hidden;
+}
+
+div.hdn {
+	position:absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+}
+
+a.hdnlink {
+	color: rgba(0, 0, 0, 0.1); 
+	text-decoration: none;
+	border-bottom: none;
+}
+
+a { text-decoration: none; }
+</style>
+
+
+
+  </head>
+  <body>
+  <audio id='audioIntro' autoplay preload="metadata" src="../audio/endlessbootup.wav"></audio>
+<script>
+var actx = new (AudioContext || webkitAudioContext)(),
+    src = "../audio/endlessloop.wav",
+    audioData, srcNode;  // global so we can access them from handlers
+
+// Load some audio (CORS need to be allowed or we won't be able to decode the data)
+fetch(src, {mode: "cors"}).then(function(resp) {return resp.arrayBuffer()}).then(decode);
+
+// Decode the audio file, then start the show
+function decode(buffer) {
+  actx.decodeAudioData(buffer, playLoop);
+}
+
+// Sets up a new source node as needed as stopping will render current invalid
+function playLoop(abuffer) {
+  if (!audioData) audioData = abuffer;  // create a reference for control buttons
+  srcNode = actx.createBufferSource();  // create audio source
+  srcNode.buffer = abuffer;             // use decoded buffer
+  srcNode.connect(actx.destination);    // create output
+  srcNode.loop = true;                  // takes care of perfect looping
+  audioIntro.onended = function () {
+  srcNode.start();                      // play...
+  };
+};   
+</script>
+<div class=hdn>
+<a href="galaxyfragmentation.html"><img src="../images/endless.jpg" height='100%'>
+
+</a>
+</div>
+
+
+  </body>
+</html>

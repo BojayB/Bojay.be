@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Angel Echo -L'appel du vide-</title>
+<body>
+
+<script src="aecho-audio-engine.js"></script>
+
+<div class="hdn">
+  <!--a href="ganthem.html"--><img src="../images/srimh.jpg" height="100%"><!--/a-->
+</div>
+
+<div class="abs">
+  <button class="button" onclick="startAEcho()">Click here for audio</button>
+  <button class="button" onclick="AEchoAudioEngine.stop()">Stop after loop</button>
+</div>
+<canvas id="visualizer"></canvas>
+<script>
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/AEchoI.mp3",
+    loop: "../audio/AEchoL.mp3",
+    exit: "../audio/AEchoE.mp3",
+    
+    autoLoop: true,
+    hasExit: true,
+    strictTiming: false,
+    title: "Angel Echo -L'appel du vide-"
+  });
+}
+</script>
+
+
+</body>
+</html>

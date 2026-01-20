@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Kikai No Tsubasa feat. Kasane Teto</title>
+<script src="aecho.js"></script>
+<body>
+
+<script src="aecho.js"></script>
+
+<div class="hdn">
+  <a href="kisaragi.html"><img src="../images/chimera dragons.jpg" height="100%"></a>
+</div>
+
+<div class="abs">
+  <button class="button" onclick="startAEcho()">Click here for audio</button>
+  <button class="button" onclick="AEchoAudioEngine.stop()">Stop after loop</button>
+</div>
+
+<script>
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/knti.mp3",
+    loop: "../audio/kntl.mp3",
+    exit: "",
+    autoLoop: true,
+    hasExit: false,
+    strictTiming: false,
+    title: "Kikai No Tsubasa feat. Kasane Teto"
+  });
+}
+</script>
+
+<p> I couldn't make an outro or a longer loop or it would've been the entire second half of the song </p>
+</body>
+</html>

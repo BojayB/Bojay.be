@@ -3,118 +3,175 @@
 <html lang="en">
 <head>
 
-<link rel="stylesheet" href="/sakura-vader2.css" type="text/css">
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">  
 
-<title>Welcome to Bojab Site!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
+<title>the testening</title>
 <style>
-
 body {
+  overflow: hidden;
   font-size: 1.8rem;
   line-height: 1.618;
-  max-width: 44em;
+  max-width: 100vw;
+  max-height: 100%;
   margin: auto;
-  color: #d9d8dc;
-  background-color: #120c0e;
+  color: #a384ff;
+  background-color: #260d46;
   padding: 10px;
 }
-
-div.hdn{
-	position:absolute;
-	top: 0px;
-	left: 0px;
+button {
+  color: #a384ff;
+  background-color: #260d46;
+  border-radius: 16px;
+  border: solid #a384ff;
 }
 
 
-a.hdnlink{
-	color: #120c0e; 
-	text-decoration: none;
-	border-bottom: none;
+.hidden {
+  visibility: hidden;
+}
+.visible {
+  visibility: visible;
 }
 
 
-.navbar {
-  overflow: hidden;
+
+.introAnimation {
+  animation-name: introCutscene;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+.closeInv {
+  animation-name: invClose;
+  animation-duration: .5s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
 }
 
-.navbar a {
-  font-size: 16px;
-  color: rgb(235,153,161);
-  padding: 5px 8px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  border-bottom: none;
+@keyframes introCutscene {
+  0% {
+    bottom: 50%;
+    cursor:auto;
+  }
+  100% {
+    color: transparent;
+    background-color: #ffffff;
+    left: 12.5vw;
+    bottom: 0%;
+    width: 75vw;
+    height: 75vh;
+    
+    cursor:auto;
+  }
 }
 
-.navbar a:hover {
-  color: #DA4453
+@keyframes invClose {
+  0% {
+    color: transparent;
+    background-color: #ffffff;
+    left: 12.5vw;
+    bottom: 0%;
+    width: 75vw;
+    height: 75vh;
+    cursor:auto;
+  }
+  100% {
+    color: transparent;
+    background-color: #ffffff;
+    left: 12.5vw;
+    bottom: -3%;
+    width: 75vw;
+    height: 1vh;
+    cursor:auto;
+  }
+}
+@keyframes invCloseButton {
+  0% {
+    background-color: transparent;
+    border-color: transparent;
+    color: transparent;
+    bottom: 50%;
+    cursor:auto;
+  }
+  100% {
+
+  }
 }
 
-.footer { 
-  font-size: 16px;
-  color: rgb(235,153,161);
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
+#inventory {
+  position:inherit;
+  bottom: 0%;
+  top: 25%;
+  width: 100%;
 }
-
-.title {
-  position:fixed;
-  left: 300px;
-  /* Fallback: Set a background color. */
-  background-color: #eb99a1;
-background: radial-gradient(circle at var(--x) var(--y) -45%, rgba(255, 255, 255, 0.7), transparent 30%);
+#start {
+  position: absolute;
+  font-size: 6vw;
+  font-display: block;
+  bottom: 50%;
+  left: 0%;
+  width: 25vw;
+  height: 7.5vh;
+  cursor: pointer;
   
-  
-  
-
-  /* Use the text as a mask for the background. */
-  /* This will show the gradient as a text color rather than element bg. */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; 
-  -moz-background-clip: text;
-  -moz-text-fill-color: transparent;
 }
 
-
-.light{
-  position; fixed;
-left:255px;
-background-color: #eb99a1;
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
+#start:not(.introAnimation):hover {
+  border-color: #260d46;
+  background-color: #a384ff;
+  color: #260d46;
 }
 
-.title:hover {
-  background-color: #DA4453
+#closeInv {
+  position:relative;
+  left: 80vw;
+  top: 8vw;
+  font-size: x-large;
+  font-weight: bolder;
+  border-radius: 50%;
 }
-
 </style>
-
-
-
 </head>
 <body>
+<h1 id="title">Game lol: the testening</h1>
+<p id="subtitle">Press start to start</p>
 
-<header>
-<!--<div class="card">-->
-<a href="/"><h1 class='title'>Bojab Website</h1></a>
-<div class='title'></div>
+
+<div id="inventory">
+<button id="start">Start</button>
+<button id="closeInv" >X</button>
+
+
+
+
+
+
+
+
+</div>
+
 <script type="text/javascript">
+const button = document.getElementsByTagName("button");
+const title = document.getElementById("title");
+const subtitle = document.getElementById("subtitle");
+const inv = document.getElementById("inventory");
+for (let i = 0; i < button.length; ++i) {
+button[i].addEventListener('click', function() {
+  if (this.id === "start"){
+    title.classList.add("hidden");
+    subtitle.classList.add("hidden");
+    this.classList.add("introAnimation");
+    button[1].classList.remove("hidden")
+  }
 
-  var pos = document.documentElement;
-  pos.addEventListener('mousemove', e =>{
-    
-    pos.style.setProperty('--x', e.clientX + 'px')
-    pos.style.setProperty('--y', e.clientY + 'px')
-    
-  })
+  if (this.id === "closeInv"){
+    button[0].classList.remove("introAnimation");
+    button[0].classList.add("closeInv");
+  }
+  })};
 
 </script>
-
-</header>
 </body>
 </html>

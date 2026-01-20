@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>everyone SHUT UP. i have something to say... by gingus</title>
+<script src="aecho.js"></script>
+<body>
+
+<script src="aecho.js"></script>
+
+<style>
+
+.button {
+      position: center;
+  border: none;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 40px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+  </style>
+
+<div class="hdn">
+  <a href="checkpoint.html"><img src="../images/gingus.jpg" height="100%"></a>
+</div>
+
+<div class="abs">
+  <button class="button" onclick="startAEcho()">Click here for audio</button>
+  <button class="button" onclick="AEchoAudioEngine.stop()">Stop after loop</button>
+</div>
+<script>
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/ihstsi.mp3",
+    loop: "../audio/ihstsl.mp3",
+    exit: "",
+    autoLoop: true,
+    hasExit: false,
+    strictTiming: false,
+    title: "everyone SHUT UP. i have something to say..."
+  });
+}
+</script>
+
+</body>
+</html>

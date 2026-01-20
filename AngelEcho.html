@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AEcho Engine Player</title>
+  <style>
+  #visualizer {
+  width: 100%;
+  height: 400px;
+  background: black;
+  display: block;
+}
+
+#seek-wrap{
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 20px auto 0 auto;
+  height: 34px;
+  box-sizing: border-box;
+  padding: 0 14px;
+}
+
+#seek-wave {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #050505;
+  border-radius: 10px;
+  z-index: 1;
+}
+
+#seek-bar {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.12;
+  z-index: 2;
+}
+
+
+  </style>
+</head>
+<body style="background:#000; color:#fff; font-family:sans-serif; text-align:center; padding-top:40px">
+
+  <h1>AEcho Audio Engine Test</h1>
+  <div style="margin: 20px;">
+    <button onclick="startPlayback()">▶️ Play</button>
+    <button onclick="AEchoAudioEngine.stop()">🛑 Stop After Loop</button>
+    <button onclick="AEchoAudioEngine.stopNow()">⛔ STOP NOW</button>
+    <button onclick="prevTrack()">⏮️ Previous</button>
+    <button onclick="nextTrack()">⏭️ Next</button>
+  </div>
+  
+  <div id="track-display"></div>
+
+
+<input type="range" min="0" max="1" step="0.01" value="1" onchange="AEchoAudioEngine.setVolume(this.value)">
+<br>
+<input type="file" id="custom-file" accept="audio/*">
+<button onclick="loadLocalFile()">Play Uploaded Track</button>
+<p><small>If you upload your own track, make sure its an MP3, OGG, WAV, or FLAC file. <i>It will</i> auto-loop. The seek bar only works for the loop, it was made mainly for uploaded music.<br> File upload time varies, be patient. Drag and drop supported.</small></p>
+
+
+<div id="seek-wrap">
+<canvas id="seek-wave"></canvas>
+<input type="range" id="seek-bar" value="0" min="0" max="100" step="0.1" title="Click or drag to seek">
+</div>
+<div style="margin-top: 5px; font-size: 0.9em;">
+  <span id="current-time">0:00</span> / <span id="total-duration">0:00</span>
+</div>
+
+
+
+
+
+
+<canvas id="visualizer" width="600" height="100" style="background:#111; display:block; margin: 0 auto 20px auto;"></canvas>
+
+
+
+
+  <script src="aecho.js?v=176"></script> <!-- your new engine file -->
+
+
+<p>Highly unstable.</p>
+  <script>
+    const trackSets = [
+      {
+        intro: "../audio/checkpointintro.wav",
+        loop:"../audio/checkpoint.wav",
+        exit:"../audio/checkpointoutro.wav",
+        title:"Discord Checkpoint",
+      },
+      {
+        intro: "../audio/AEchoI.mp3",
+        loop: "../audio/AEchoL.mp3",
+        exit: "../audio/AEchoE.mp3",
+        title: "Angel Echo -L'appel du vide-"
+      },
+      {
+        intro: "../audio/bbi.mp3",
+        loop: "../audio/bbl.mp3",
+        exit: "../audio/bbe.mp3",
+        title: "BIRDBRAIN"
+      },
+      {
+        intro: "../audio/ganthemi.mp3",
+        loop: "../audio/gantheml.mp3",
+        title: "Giratina Anthem"
+        // no exit = fine
+      },
+      {
+        intro: "../audio/deeznuts.flac",
+        loop: "../audio/goteem.flac",
+      },
+      {
+        intro: "../audio/dial-up2.flac",
+        loop: "../audio/dial-up2.flac",
+        title: "Looks fun visually",
+      },
+    ];
+
+    let currentIndex = 0;
+    
+    async function startPlayback() {
+      AEchoAudioEngine.resumeIfSuspended();
+      await AEchoAudioEngine.init(trackSets[currentIndex]);
+      drawSeekWaveform();
+    }
+
+    async function nextTrack() {
+      currentIndex = (currentIndex + 1) % trackSets.length;
+      AEchoAudioEngine.resumeIfSuspended();
+      await AEchoAudioEngine.changeTrackSet(trackSets[currentIndex]);
+      drawSeekWaveform();
+    }
+
+    async function prevTrack() {
+      currentIndex = (currentIndex - 1 + trackSets.length) % trackSets.length;
+      AEchoAudioEngine.resumeIfSuspended();
+      await AEchoAudioEngine.changeTrackSet(trackSets[currentIndex]);
+      drawSeekWaveform();
+    }
+    
+function loadLocalFile() {
+  const input = document.getElementById("custom-file");
+  if (!input.files.length) return;
+  
+  
+
+
+  const file = input.files[0];
+  const reader = new FileReader();
+  
+  
+  const supportedTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/flac', 'audio/x-flac', 'audio/ogg; codecs=flac'];
+
+if (!supportedTypes.includes(file.type)) {
+  alert('Unsupported file type! Please upload an MP3, WAV, or OGG file.');
+  return;
+}
+
+  reader.onload = async function (event) {
+    const arrayBuffer = event.target.result;
+    const audioBuffer = await AEchoAudioEngine.actx.decodeAudioData(arrayBuffer);
+
+    AEchoAudioEngine.stop();
+
+    await AEchoAudioEngine.changeTrackSet({
+  loop: audioBuffer,
+  hasExit: false,
+  title: file.name
+});
+drawSeekWaveform();
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+
+
+const seekBar = document.getElementById("seek-bar");
+
+let seekUpdateInterval = null;
+
+
+seekBar.addEventListener("pointerdown", () => { isSeeking = true; });
+seekBar.addEventListener("pointerup", () => { isSeeking = false; });
+
+seekBar.addEventListener("input", () => {
+  if (!AEchoAudioEngine.getCurrentBuffer()) return;
+  const seekTo = (seekBar.value / 100) * AEchoAudioEngine.getDuration();
+  AEchoAudioEngine.seekTo(seekTo);
+});
+
+setInterval(updateSeekBar, 100);
+
+
+function formatTime(seconds) {
+  const sign = seconds < 0 ? "-" : "";
+  const abs = Math.abs(seconds);
+  
+  const mins = Math.floor(abs / 60);
+  const secs = Math.floor(abs % 60).toString().padStart(2, "0");
+  
+  return `${sign}${mins}:${secs}`;
+}
+
+let isSeeking = false;
+
+function updateSeekBar() {
+  // If nothing is loaded yet, don't advance UI
+  if (!AEchoAudioEngine.getCurrentBuffer()) {
+    seekBar.value = 0;
+    document.getElementById("current-time").textContent = "0:00";
+    document.getElementById("total-duration").textContent = "0:00";
+    return;
+  }
+
+  const currentTime = AEchoAudioEngine.getCurrentTime();   // may be negative (you want that)
+  const duration = AEchoAudioEngine.getDuration();
+
+  // This one is ONLY for the slider math (slider can't represent negative)
+  const safeTime = Math.max(0, Math.min(currentTime, duration));
+
+  // Update slider only if user isn't dragging it
+  if (!isSeeking && duration > 0) {
+    seekBar.value = (safeTime / duration) * 100;
+  }
+
+  // Keep your negative display exactly as-is:
+  document.getElementById("current-time").textContent = formatTime(currentTime);
+  document.getElementById("total-duration").textContent = formatTime(duration);
+
+  // If you're drawing the playhead each tick:
+  drawSeekWaveform();
+}
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const dragOverlay = document.getElementById("drag-overlay");
+
+  window.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dragOverlay.style.opacity = "1";
+    dragOverlay.style.pointerEvents = "auto";
+  });
+
+  window.addEventListener("dragleave", (e) => {
+    if (e.target === document || e.target === document.body) {
+      dragOverlay.style.opacity = "0";
+      dragOverlay.style.pointerEvents = "none";
+    }
+  });
+
+  window.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dragOverlay.style.opacity = "0";
+    dragOverlay.style.pointerEvents = "none";
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    const supportedTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/flac', 'audio/x-flac', 'audio/ogg; codecs=flac'];
+    if (!supportedTypes.includes(file.type)) {
+      alert('Unsupported file type! Please drop an MP3, WAV, or OGG file.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function (event) {
+      const arrayBuffer = event.target.result;
+      const audioBuffer = await AEchoAudioEngine.actx.decodeAudioData(arrayBuffer);
+
+      AEchoAudioEngine.stopNow();
+      await AEchoAudioEngine.changeTrackSet({
+        loop: audioBuffer,
+        hasExit: false,
+        title: file.name
+      });
+      drawSeekWaveform();
+    };
+    reader.readAsArrayBuffer(file);
+  });
+});
+
+
+
+
+
+
+function buildPeaksFromBuffer(audioBuffer, width) {
+ const ch0 = audioBuffer.getChannelData(0);
+ const ch1 = audioBuffer.numberOfChannels > 1 ? audioBuffer.getChannelData(1) : null;
+ 
+ const blockSize = Math.max(1, Math.floor(ch0.length / width));
+ const peaks = new Float32Array(width);
+ 
+ for (let i = 0; i < width; i++) {
+   const start = i * blockSize;
+   const end = Math.min(ch0.length, start + blockSize);
+   
+   let peak = 0;
+   for (let j = start; j < end; j++) {
+     const s = ch1 ? (ch0[j] + ch1[j]) * 0.5 : ch0[j];
+     const a = Math.abs(s);
+     if (a > peak) peak = a;
+   }
+   peaks[i] = peak;
+ }
+ return peaks;
+ }
+
+
+
+
+
+
+function drawSeekWaveform() {
+ const canvas = document.getElementById("seek-wave");
+ if (!canvas) return;
+ 
+ 
+ const dpr = window.devicePixelRatio || 1;
+ const w = canvas.clientWidth;
+ const h = canvas.clientHeight;
+ 
+ 
+ if (w === 0 || h === 0) return;
+ console.log("seek-wave size:", w, h);
+
+ 
+ canvas.width = w * dpr;
+ canvas.height = h *dpr;
+ 
+ 
+ const ctx = canvas.getContext("2d");
+ ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+ 
+ 
+ ctx.clearRect(0, 0, w, h);
+ 
+ 
+ const audioBuffer = AEchoAudioEngine.getCurrentBuffer();
+ if (!audioBuffer) return;
+ 
+ 
+ const peaks = buildPeaksFromBuffer(audioBuffer, w);
+ 
+ 
+ //"normalize so quiet tracks still look visible"
+ let max = 0;
+ for (let i = 0; i < peaks.length; i++) if (peaks[i] > max) max = peaks[i];
+ const scale = max > 0 ? (1 / max) : 1;
+ 
+ 
+ ctx.fillStyle = "#ff00ff";
+ const mid = h / 2;
+ 
+ 
+ for (let x = 0; x < w; x++) {
+   const p = (peaks[x] || 0) * scale;
+   const barH = Math.max(1, p * (h * 0.9));
+   ctx.fillRect(x, mid - barH / 2, 1, barH);
+  }
+  
+  
+  const t = AEchoAudioEngine.getCurrentTime();
+  const dur = AEchoAudioEngine.getDuration();
+  
+  if (dur > 0) {
+   const safe = Math.max(0, Math.min(t, dur));
+   const x = (safe / dur) * w;
+   
+   ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+   ctx.fillRect(x, 0, 2, h);
+  }
+}
+
+window.addEventListener("load", drawSeekWaveform);
+</script>
+
+  
+  
+  <div id="drag-overlay" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  font-size: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+">
+  Drop audio file to play
+</div>
+
+
+</body>
+</html>

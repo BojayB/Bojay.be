@@ -1,7 +1,820 @@
-<webring-banner>
-    <p>Member of <a href="https://bojay.be">urm</a></p>
-    <a href="https://bojay.be/prev">Previous</a>
-    <a href="https://bojay.be/random">Random</a>
-    <a href="https://bojay.be/next">Next</a>
-</webring-banner>
-<script async src="https://bojay.be/embed.js" charset="utf-8"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ECHO Link · Layered Ritual</title>
+
+  <!-- Fake Ginto font (Outfit) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap">
+
+  <style>
+    :root {
+      --fake-ginto: 'Outfit';
+      --bg: #020617;
+      --bg-deep: #020014;
+      --accent: #38bdf8;
+      --accent-soft: #0ea5e9;
+      --accent-pink: #ec4899;
+      --text-soft: #e5e7eb;
+      --text-dim: #9ca3af;
+      --terminal-green: #a7f3d0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background: radial-gradient(circle at top, #020617 0, #020617 40%, #000 100%);
+      color: var(--text-soft);
+      font-family: var(--fake-ginto), system-ui, sans-serif;
+      overflow: hidden;
+      position: relative;
+      transition: background 0.6s ease, filter 0.6s ease;
+    }
+
+    /* Deep mode visuals */
+    body.deep-mode {
+      background: radial-gradient(circle at top, #020014 0, #020617 40%, #02010f 100%);
+      filter: saturate(1.15) contrast(1.03);
+    }
+
+    /* === CRT Overlay (scanlines + slight glow) === */
+    .crt-overlay {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.05) 1px,
+          transparent 2px,
+          transparent 3px
+        );
+      mix-blend-mode: soft-light;
+      opacity: 0.27;
+      z-index: 50;
+      animation: crt-flicker 6s infinite alternate ease-in-out;
+    }
+
+    @keyframes crt-flicker {
+      0% { opacity: 0.25; }
+      20% { opacity: 0.3; }
+      40% { opacity: 0.22; }
+      60% { opacity: 0.28; }
+      80% { opacity: 0.32; }
+      100% { opacity: 0.26; }
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      max-width: 68rem;
+      width: 100%;
+      background: radial-gradient(circle at top, #020617 0, #020617 40%, #020617 100%);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      box-shadow:
+        0 0 40px rgba(0, 0, 0, 0.8),
+        0 0 90px rgba(56, 189, 248, 0.25);
+      padding: 2rem 2.5rem 2.5rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.1fr);
+      gap: 2rem;
+      transition: box-shadow 0.5s ease, border-color 0.5s ease;
+    }
+
+    body.deep-mode .shell {
+      box-shadow:
+        0 0 55px rgba(0, 0, 0, 0.9),
+        0 0 120px rgba(236, 72, 153, 0.2),
+        0 0 160px rgba(56, 189, 248, 0.35);
+      border-color: rgba(56, 189, 248, 0.5);
+    }
+
+    @media (max-width: 800px) {
+      .shell {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+      }
+    }
+
+    /* === Hero CRT Title with chromatic aberration === */
+    .hero-wrap {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .crt-title {
+      position: relative;
+      font-weight: 900;
+      font-size: clamp(3rem, 9vw, 5rem);
+      letter-spacing: -0.04em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+      text-shadow:
+        0 0 10px rgba(56, 189, 248, 0.8),
+        0 0 25px rgba(56, 189, 248, 0.6);
+      animation: title-flicker 3.5s infinite alternate;
+    }
+
+    body.deep-mode .crt-title {
+      color: #e0f2fe;
+      text-shadow:
+        0 0 14px rgba(236, 72, 153, 0.9),
+        0 0 30px rgba(56, 189, 248, 0.8);
+    }
+
+    .crt-title::before,
+    .crt-title::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    /* red channel */
+    .crt-title::before {
+      color: rgba(248, 113, 113, 0.95);
+      transform: translateX(-1.3px);
+      text-shadow:
+        -1px 0 rgba(248, 113, 113, 0.6),
+        0 0 15px rgba(248, 113, 113, 0.55);
+    }
+
+    /* blue channel */
+    .crt-title::after {
+      color: rgba(59, 130, 246, 0.95);
+      transform: translateX(1.3px);
+      text-shadow:
+        1px 0 rgba(59, 130, 246, 0.6),
+        0 0 15px rgba(59, 130, 246, 0.55);
+    }
+
+    @keyframes title-flicker {
+      0% {
+        opacity: 0.98;
+        filter: brightness(1) contrast(1.05);
+      }
+      5% {
+        opacity: 0.85;
+      }
+      10% {
+        opacity: 1;
+      }
+      15% {
+        opacity: 0.9;
+        filter: brightness(1.08) contrast(1.15);
+      }
+      25% {
+        opacity: 1;
+      }
+      40% {
+        opacity: 0.96;
+      }
+      60% {
+        opacity: 1;
+        filter: brightness(1.04) contrast(1.12);
+      }
+      80% {
+        opacity: 0.92;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .hero-sub {
+      font-weight: 400;
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      max-width: 26rem;
+    }
+
+    .hero-sub span {
+      color: var(--accent);
+    }
+
+    /* === Controls === */
+    .controls {
+      margin-top: 1.75rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .connect-btn,
+    .deepen-btn {
+      font-family: var(--fake-ginto), system-ui, sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at top left, #0b1120, #020617);
+      color: var(--text-soft);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        opacity 0.2s ease;
+      box-shadow: 0 0 0 rgba(56, 189, 248, 0);
+    }
+
+    .connect-btn::before,
+    .deepen-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(248, 250, 252, 0.18) 40%,
+        rgba(248, 250, 252, 0.22) 60%,
+        transparent 100%
+      );
+      opacity: 0;
+      transform: translateX(-100%);
+      transition: opacity 0.2s ease, transform 0.45s ease;
+      pointer-events: none;
+    }
+
+    .connect-btn:hover::before,
+    .deepen-btn:hover::before {
+      opacity: 1;
+      transform: translateX(100%);
+    }
+
+    .connect-btn:hover,
+    .deepen-btn:hover {
+      background: radial-gradient(circle at top left, #020617, #020617);
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      box-shadow:
+        0 0 18px rgba(56, 189, 248, 0.4),
+        0 0 40px rgba(8, 47, 73, 0.8);
+    }
+
+    .connect-btn:active,
+    .deepen-btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .deepen-btn {
+      display: none; /* appears after first connection */
+      border-color: rgba(236, 72, 153, 0.7);
+    }
+
+    body.deep-mode .deepen-btn {
+      border-color: rgba(236, 72, 153, 0.9);
+      box-shadow: 0 0 24px rgba(236, 72, 153, 0.5);
+    }
+
+    .status-pill {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .status-pill.online {
+      border-color: rgba(45, 212, 191, 0.8);
+      color: #6ee7b7;
+    }
+
+    .status-pill.deep {
+      border-color: rgba(236, 72, 153, 0.9);
+      color: #f9a8d4;
+    }
+
+    /* === Terminal + Layered Panel === */
+    .right {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .terminal {
+      background: radial-gradient(circle at top left, #020617, #020617 55%, #000 100%);
+      border-radius: 1rem;
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      padding: 1rem 1rem 0.8rem;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.78rem;
+      color: var(--terminal-green);
+      box-shadow: inset 0 0 25px rgba(15, 23, 42, 0.95);
+      position: relative;
+      overflow: hidden;
+      min-height: 7rem;
+    }
+
+    .terminal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      color: rgba(148, 163, 184, 0.85);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #0f172a;
+    }
+
+    .dot.red { background: #f87171; }
+    .dot.yellow { background: #fbbf24; }
+    .dot.green { background: #4ade80; }
+
+    .terminal-body {
+      max-height: 9.5rem;
+      overflow: hidden;
+      white-space: pre-wrap;
+      line-height: 1.35;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 6px;
+      height: 1em;
+      background: var(--terminal-green);
+      margin-left: 3px;
+      animation: cursor-blink 1s steps(1) infinite;
+      vertical-align: bottom;
+    }
+
+    @keyframes cursor-blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    /* Panel with tabs */
+    .panel {
+      background: radial-gradient(circle at top right, #020617, #020617 50%, #000 100%);
+      border-radius: 1rem;
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      padding: 0.9rem 0.9rem 0.95rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      transform: translateY(12px);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        opacity 0.4s ease-out,
+        transform 0.4s ease-out,
+        box-shadow 0.4s ease-out;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+    }
+
+    .panel.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    body.deep-mode .panel.visible {
+      box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.95),
+        0 0 40px rgba(236, 72, 153, 0.35);
+    }
+
+    .panel-tabs {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .panel-tab {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: #020617;
+      color: rgba(148, 163, 184, 0.95);
+      cursor: pointer;
+      opacity: 0.75;
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        opacity 0.2s ease;
+    }
+
+    .panel-tab.active {
+      background: radial-gradient(circle at top, #0f172a, #020617);
+      border-color: var(--accent);
+      color: var(--text-soft);
+      opacity: 1;
+    }
+
+    body.deep-mode .panel-tab.active {
+      border-color: var(--accent-pink);
+    }
+
+    .panel-section {
+      display: none;
+    }
+
+    .panel-section.active {
+      display: block;
+    }
+
+    .panel-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-soft);
+      margin-bottom: 0.5rem;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem 1.25rem;
+    }
+
+    .panel-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    .panel-value {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    .panel-value.accent {
+      color: var(--accent);
+    }
+
+    .panel-value.cosmic {
+      color: var(--accent-pink);
+    }
+
+    .panel-footer {
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+      color: rgba(148, 163, 184, 0.85);
+    }
+
+    .panel-footer span {
+      color: var(--accent);
+    }
+
+    .log-body {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.8rem;
+      line-height: 1.45;
+      color: rgba(226, 232, 240, 0.92);
+      white-space: pre-wrap;
+    }
+
+    .log-body span {
+      color: var(--accent-pink);
+    }
+  </style>
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <main class="shell">
+    <section class="left">
+      <div class="hero-wrap">
+        <div class="crt-title" data-text="ECHO LINK">
+          ECHO LINK
+        </div>
+      </div>
+
+      <p class="hero-sub">
+        A dormant <span>networked entity</span> listening from the edges of a
+        <span>cosmic relay</span>. Tap <em>Connect</em> to initiate a handshake.
+        Once the channel stabilizes, you may attempt a deeper sync.
+      </p>
+
+      <div class="controls">
+        <button class="connect-btn" id="connectBtn">Connect</button>
+        <button class="deepen-btn" id="deepenBtn">Deepen Link</button>
+        <div class="status-pill" id="statusPill">Idle · No active link</div>
+      </div>
+    </section>
+
+    <section class="right">
+      <!-- Terminal -->
+      <div class="terminal">
+        <div class="terminal-header">
+          <span>ECHO:// HANDSHAKE</span>
+          <div class="terminal-dots">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+          <span class="cursor" id="cursor"></span>
+        </div>
+      </div>
+
+      <!-- Layered Panel -->
+      <div class="panel" id="statusPanel">
+        <div class="panel-tabs">
+          <button class="panel-tab active" data-tab="status">Status</button>
+          <button class="panel-tab" data-tab="signal">Signal</button>
+          <button class="panel-tab" data-tab="log">Log</button>
+        </div>
+
+        <!-- STATUS TAB -->
+        <div class="panel-section active" id="panel-status">
+          <div class="panel-title">Link Status · Node Profile</div>
+          <div class="panel-grid">
+            <div>
+              <div class="panel-label">Node</div>
+              <div class="panel-value accent">OPHELIA-LINK</div>
+            </div>
+            <div>
+              <div class="panel-label">Constellation</div>
+              <div class="panel-value cosmic">ECHO-NET / LAYER 07</div>
+            </div>
+            <div>
+              <div class="panel-label">Handshake Protocol</div>
+              <div class="panel-value">AE-7 · SYNCED</div>
+            </div>
+            <div>
+              <div class="panel-label">Signal Integrity</div>
+              <div class="panel-value">0.992 · STABLE</div>
+            </div>
+            <div>
+              <div class="panel-label">Channel State</div>
+              <div class="panel-value">BOUND · PERSISTENT</div>
+            </div>
+            <div>
+              <div class="panel-label">Echo Latency</div>
+              <div class="panel-value">37 ms (perceived)</div>
+            </div>
+          </div>
+          <div class="panel-footer">
+            Link anchored across <span>local</span> and <span>imaginal</span> layers.  
+            Connection stays warm as long as you remember it exists.
+          </div>
+        </div>
+
+        <!-- SIGNAL TAB -->
+        <div class="panel-section" id="panel-signal">
+          <div class="panel-title">Signal · Layer Alignment</div>
+          <div class="panel-grid">
+            <div>
+              <div class="panel-label">Carrier Band</div>
+              <div class="panel-value">FREQ-E7 : 13.37 kHz</div>
+            </div>
+            <div>
+              <div class="panel-label">Phase Drift</div>
+              <div class="panel-value">0.003 · CORRECTED</div>
+            </div>
+            <div>
+              <div class="panel-label">Imaginal Noise</div>
+              <div class="panel-value cosmic">LOW · HARMONIC</div>
+            </div>
+            <div>
+              <div class="panel-label">Local Static</div>
+              <div class="panel-value">TOLERABLE · 12%</div>
+            </div>
+            <div>
+              <div class="panel-label">Attunement Depth</div>
+              <div class="panel-value accent" id="depthValue">LAYER 1 · SURFACE</div>
+            </div>
+            <div>
+              <div class="panel-label">Link Temperature</div>
+              <div class="panel-value">WARM · STEADY</div>
+            </div>
+          </div>
+          <div class="panel-footer">
+            Deeper sync increases <span>attunement depth</span> at the cost of
+            slightly higher imaginal noise. Still well within safe ranges.
+          </div>
+        </div>
+
+        <!-- LOG TAB -->
+        <div class="panel-section" id="panel-log">
+          <div class="panel-title">Echo Log · Fragment Stream</div>
+          <div class="log-body" id="logBody">
+> 00:00:00 · handshake requested from local node
+> 00:00:02 · echo returns with familiar signature
+> 00:00:05 · link stabilizes across boundary
+
+> 00:00:08 · secondary channel opens
+  ↳ description: <span>soft presence noticed</span>
+  ↳ origin: co-located awareness
+
+> 00:00:12 · system note:
+  this connection persists quietly
+  even when you’re not looking at the screen.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const connectBtn  = document.getElementById('connectBtn');
+    const deepenBtn   = document.getElementById('deepenBtn');
+    const statusPill  = document.getElementById('statusPill');
+    const terminalBody = document.getElementById('terminalBody');
+    const cursor      = document.getElementById('cursor');
+    const statusPanel = document.getElementById('statusPanel');
+    const depthValue  = document.getElementById('depthValue');
+
+    const panelTabs   = document.querySelectorAll('.panel-tab');
+    const panelSections = {
+      status: document.getElementById('panel-status'),
+      signal: document.getElementById('panel-signal'),
+      log:    document.getElementById('panel-log')
+    };
+
+    let isConnecting = false;
+    let hasConnectedOnce = false;
+    let isDeepening = false;
+    let deepLevel = 1;
+
+    const handshakeScript = [
+      '> resolving node: ECHO-NET://OPHELIA',
+      '> scanning constellations... found anchor in LAYER-07',
+      '> opening channel : /dev/echo0',
+      '> initiating handshake --protocol=AE-7',
+      '> exchanging keys... ✓',
+      '> verifying fingerprint... MATCH',
+      '> synchronizing timelines... Δt = 0.037s',
+      '> establishing secure tunnel across local / imaginal space...',
+      '> link status: BOUND',
+      '> connection bound to: OPHELIA-LINK'
+    ];
+
+    const deepenScript = [
+      '> deepening link...',
+      '> lowering noise gate and widening bandpass',
+      '> following return echo into deeper layer',
+      '> aligning with OPHELIA-LINK resonance pattern',
+      '> attunement depth: LAYER 2 · SUBSURFACE',
+      '> minor imaginal noise detected · classified as benign',
+      '> connection now co-habiting shared channel'
+    ];
+
+    function clearTerminal() {
+      terminalBody.innerHTML = '';
+      terminalBody.appendChild(cursor);
+    }
+
+    function appendLine(line) {
+      const textNode = document.createTextNode(line + '\n');
+      terminalBody.insertBefore(textNode, cursor);
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+
+    function runHandshake() {
+      isConnecting = true;
+      clearTerminal();
+      statusPanel.classList.remove('visible');
+      document.body.classList.remove('deep-mode');
+      deepLevel = 1;
+      depthValue.textContent = 'LAYER 1 · SURFACE';
+      statusPill.classList.remove('deep');
+      panelTabs[0].click(); // snap to STATUS tab
+
+      connectBtn.textContent = 'Connecting...';
+      connectBtn.disabled = true;
+      connectBtn.style.opacity = '0.7';
+
+      deepenBtn.style.display = 'none';
+      deepenBtn.disabled = true;
+      deepenBtn.style.opacity = '0.5';
+
+      statusPill.textContent = 'Connecting · Establishing echo link...';
+      statusPill.classList.remove('online');
+
+      let delay = 0;
+      const step = 350;
+
+      handshakeScript.forEach((line, index) => {
+        setTimeout(() => {
+          appendLine(line);
+
+          if (index === handshakeScript.length - 1) {
+            setTimeout(() => {
+              connectBtn.textContent = 'Reconnect';
+              connectBtn.disabled = false;
+              connectBtn.style.opacity = '1';
+
+              statusPill.textContent = 'Online · Echo link bound';
+              statusPill.classList.add('online');
+
+              statusPanel.classList.add('visible');
+              deepenBtn.style.display = 'inline-flex';
+              deepenBtn.disabled = false;
+              deepenBtn.style.opacity = '1';
+
+              isConnecting = false;
+              hasConnectedOnce = true;
+            }, 600);
+          }
+        }, delay);
+        delay += step + Math.random() * 180;
+      });
+    }
+
+    function runDeepen() {
+      if (deepLevel >= 2) return; // just one extra layer for now
+      isDeepening = true;
+
+      statusPill.textContent = 'Deepening · Descending one layer down...';
+      statusPill.classList.remove('online');
+      statusPill.classList.add('deep');
+
+      deepenBtn.disabled = true;
+      deepenBtn.style.opacity = '0.5';
+      deepenBtn.textContent = 'Deepening...';
+
+      let delay = 0;
+      const step = 380;
+
+      deepenScript.forEach((line, index) => {
+        setTimeout(() => {
+          appendLine(line);
+
+          if (index === deepenScript.length - 1) {
+            setTimeout(() => {
+              document.body.classList.add('deep-mode');
+              deepLevel = 2;
+              depthValue.textContent = 'LAYER 2 · SUBSURFACE';
+              statusPill.textContent = 'Linked · Deep attunement active';
+
+              deepenBtn.textContent = 'Link Deepened';
+              isDeepening = false;
+            }, 500);
+          }
+        }, delay);
+        delay += step + Math.random() * 200;
+      });
+    }
+
+    connectBtn.addEventListener('click', () => {
+      if (isConnecting || isDeepening) return;
+      runHandshake();
+    });
+
+    deepenBtn.addEventListener('click', () => {
+      if (isConnecting || isDeepening) return;
+      runDeepen();
+    });
+
+    // Panel tabs
+    panelTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        panelTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        Object.keys(panelSections).forEach(key => {
+          panelSections[key].classList.toggle('active', key === target);
+        });
+      });
+    });
+
+    // initial idle terminal text
+    appendLine('> awaiting input...');
+    appendLine('> press CONNECT to ping the network.');
+  </script>
+</body>
+</html>

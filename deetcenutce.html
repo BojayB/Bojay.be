@@ -4,7 +4,7 @@
 <style>
 div.hdn {
 	position:absolute;
-	top: 0px;
+	top: 100px;
 	left: 0px;
 	right: 0px;
 	bottom: 0px;
@@ -29,32 +29,21 @@ body {
     
     
     
+<script src="aecho-audio-engine.js"></script>
 <script>
-var actx = new (AudioContext || webkitAudioContext)(),
-    src = "audio/goteem.flac",
-    audioData, srcNode;  // global so we can access them from handlers
-
-
-// Load some audio (CORS need to be allowed or we won't be able to decode the data)
-fetch(src, {mode: "cors"}).then(function(resp) {return resp.arrayBuffer()}).then(decode);
-
-
-
-// Decode the audio file, then start the show
-function decode(buffer) {
-  actx.decodeAudioData(buffer, playLoop);
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/deeznuts.flac",
+    loop: "../audio/goteem.flac",
+    autoLoop: true,
+    hasExit: true,
+    strictTiming: false,
+    title: "Angel Echo -L'appel du vide-"
+  });
 }
-
-// Sets up a new source node as needed as stopping will render current invalid
-function playLoop(abuffer) {
-  if (!audioData) audioData = abuffer;  // create a reference for control buttons
-  srcNode = actx.createBufferSource();  // create audio source
-  srcNode.buffer = abuffer;             // use decoded buffer
-  srcNode.connect(actx.destination);    // create output
-  srcNode.loop = true;                  // takes care of perfect looping
-  srcNode.start();                      // play...
-};
 </script>
+      <a onclick="startAEcho()"><h1><small><small>click the text</small></small> holy fuck, after like, over 4 years, I finally have deez nuts I wanted...</h1></a>
 <div class="hdn">
 <a href="topscore.html">
 <img src="images/gotem.jpg" width=100% height=100%>

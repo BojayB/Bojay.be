@@ -13,11 +13,11 @@ html {
 body {
   font-size: 1.8rem;
   line-height: 1.618;
-  max-width: 38em;
+  max-width: 48.5em;
   margin: auto;
-  color: #d9d8dc;
-  background-color: #120c0e;
-  padding: 13px;
+  color: #a384ff;
+  background-color: #260d46;
+  padding: 10px;
 }
 
 @media (max-width: 684px) {
@@ -44,6 +44,11 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 2.35em;
+  color: #a384ff;
+}
+
+h1 a {
+  color: #8f6aff;
 }
 
 h2 {
@@ -76,19 +81,20 @@ small, sub, sup {
 }
 
 hr {
-  border-color: #eb99a1;
+  border-color: #a384ff;
 }
 
 a {
+  color: #8f6aff;
   text-decoration: none;
-  color: #eb99a1;
 }
 a:visited {
-  color: #e26f7a;
+  color: #603dca;
 }
 a:hover {
-  color: #DA4453;
-  border-bottom: 2px solid #d9d8dc;
+  
+  color: #7445ff;
+  border-bottom: 1px solid #a384ff;
 }
 
 ul {
@@ -224,4 +230,44 @@ label, legend, fieldset {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
+}
+
+
+
+div.hdn{
+	position:absolute;
+	top: 0px;
+	left: 0px;
+}
+
+
+a.hdnlink{
+	color: transparent; 
+	text-decoration: none;
+	border-bottom: none;
+}
+
+.navbar {
+  overflow: hidden;
+}
+
+.navbar a {
+  font-size: 16px;
+  padding: 3px 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-bottom: none;
+}
+
+.footer { 
+  font-size: 16px;
+  color: rgb(209, 153, 235);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.joe {
+font-family: Helvetica Bold, sans-serif;
 }

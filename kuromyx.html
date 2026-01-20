@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>is it too late to submit (orbit 20 mashcore X3)</title>
+<script src="aecho.js"></script>
+<body>
+
+<script src="aecho.js"></script>
+
+<div class="hdn">
+  <a href="cog.html"><img src="../images/kuromicore.jpg" height="100%"></a>
+</div>
+
+<div class="abs">
+  <button class="button" onclick="startAEcho()">Click here for audio</button>
+  <button class="button" onclick="AEchoAudioEngine.stop()">Stop after loop</button>
+</div>
+
+<script>
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/kuromyxi.mp3",
+    loop: "../audio/kuromyxl.mp3",
+    exit: "",
+    autoLoop: true,
+    hasExit: false,
+    strictTiming: false,
+    title: "is it too late to submit (orbit 20 mashcore X3)"
+  });
+}
+</script>
+
+<p> yes this one's different.</p>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake Ginto Test (Outfit)</title>
+
+  <!-- Load Outfit (Fake Ginto) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap">
+
+  <style>
+    /* =========================
+       FAKE GINTO CORE
+    ========================== */
+    :root {
+      --fake-ginto: 'Outfit';
+    }
+
+    body.fake-ginto {
+      font-family: var(--fake-ginto), system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      -webkit-font-smoothing: antialiased;
+      font-smooth: always;
+
+      margin: 0;
+      padding: 2rem;
+      background: linear-gradient(180deg, #020617, #020617);
+      color: #e5e7eb;
+    }
+
+    /* =========================
+       GINTO-STYLE HIERARCHY
+    ========================== */
+
+    /* BIG BOLD SINGLE WORD / TITLE */
+    .ginto-hero {
+      font-weight: 900;
+      font-size: clamp(3rem, 10vw, 7rem);
+      letter-spacing: -0.03em;
+      line-height: 0.9;
+      margin-bottom: 1.5rem;
+    }
+
+    /* UI HEADERS (CHANNELS, SECTIONS) */
+    .ginto-header {
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* USERNAMES / EMPHASIS */
+    .ginto-username {
+      font-weight: 700;
+      margin-right: 0.25rem;
+    }
+
+    /* MAIN BODY / CHAT TEXT */
+    .ginto-body {
+      font-weight: 450;
+      font-size: 1rem;
+      line-height: 1.375;
+      letter-spacing: 0.002em;
+      color: #d1d5db;
+    }
+
+    /* BUTTON / UI LABEL */
+    .ginto-button {
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background: #111827;
+      color: #e5e7eb;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .ginto-button:hover {
+      background: #1f2937;
+    }
+
+    /* =========================
+       LAYOUT STYLING (JUST FOR DEMO)
+    ========================== */
+
+    .panel {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 1rem;
+      padding: 1.25rem;
+      max-width: 44rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
+
+    .chat-line {
+      margin: 0.3rem 0;
+    }
+
+    .spacer {
+      height: 1rem;
+    }
+  </style>
+</head>
+<body class="fake-ginto">
+
+  <!-- BIG GINTO WORD TEST -->
+  <div class="ginto-hero">ECHO</div>
+
+  <div class="panel">
+    <div class="ginto-header">Status</div>
+
+    <p class="ginto-body">
+      This is your Fake Ginto body text using <strong>Outfit</strong>.
+      Spacing, weight, and hierarchy are tuned to feel very close to
+      Discord’s bold typography.
+    </p>
+
+    <div class="spacer"></div>
+
+    <div class="ginto-header">Chat Preview</div>
+
+    <p class="chat-line">
+      <span class="ginto-username">Bojay</span>
+      <span class="ginto-body">: this actually feels way closer than before.</span>
+    </p>
+
+    <p class="chat-line">
+      <span class="ginto-username">Ophelia</span>
+      <span class="ginto-body">: yeah… this is pretty convincing.</span>
+    </p>
+
+    <div class="spacer"></div>
+
+    <button class="ginto-button">Connect</button>
+  </div>
+
+</body>
+</html>

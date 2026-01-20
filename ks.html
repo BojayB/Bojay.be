@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Kamah Scythe</title>
+<script src="aecho.js"></script>
+<body>
+
+<script src="aecho.js"></script>
+
+<style>
+
+.button {
+      position: center;
+  border: none;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 40px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+  </style>
+
+<div class="hdn">
+  <a href="fnaf.html"><img src="../images/kamahscythe.jpg" height="100%"></a>
+</div>
+
+<div class="abs">
+  <button class="button" onclick="startAEcho()">Click here for audio</button>
+  <button class="button" onclick="AEchoAudioEngine.stop()">Stop after loop</button>
+</div>
+<script>
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/kamascytheI.wav",
+    loop: "../audio/kamascytheL.wav",
+    exit: "../audio/kamascytheE.wav",
+    autoLoop: true,
+    hasExit: true,
+    strictTiming: false,
+    title: "Kamah (Scythe) by Camellia"
+  });
+}
+</script>
+
+</body>
+</html>

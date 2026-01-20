@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dialogue Game</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      color: white;
+      font-family: monospace;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    
+    canvas {
+      position: fixed; /* Keeps it fixed on the screen */
+      top: 0;
+      left: 0;
+      z-index: -1; /* Ensures it's behind other content */
+    }
+    
+    .content {
+      position: relative;
+      z-index: 1; /* Makes sure the content is above the canvas */
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+
+    #game {
+      max-width: 800px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #dialogue {
+      font-size: 1.2rem;
+      white-space: pre-wrap;
+      min-height: 4em;
+      overflow-wrap: break-word;
+    }
+
+    #choices {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    
+    .letter {
+  opacity: 0;
+  display: inline-block;
+  transition: opacity 0.3s ease;
+}
+.letter.visible {
+  opacity: 1;
+}
+
+
+    .choice {
+      background: #222;
+      border: 1px solid #555;
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .choice:hover {
+      background: #444;
+    }
+
+    .hidden {
+      display: none;
+    }
+    
+    .disabled {
+      pointer-events: none;
+      }
+  </style>
+</head>
+<body>
+  <canvas id="ambientCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('ambientCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const NUM_PARTICLES = 500; // Increased particle count
+    const particles = [];
+    let mouse = { x: 0, y: 0, dx: 0, dy: 0 };
+
+    function createParticle() {
+      const angle = Math.random() * 2 * Math.PI;
+      const speed = Math.random() * 0.0002 + 0.0002;
+      const waveAngleOffsetX = Math.random() * Math.PI * 2;
+      const waveAngleOffsetY = Math.random() * Math.PI * 2;
+      return {
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 1.5 + 0.5,
+        baseSpeedX: Math.cos(angle) * speed,
+        baseSpeedY: Math.sin(angle) * speed,
+        velocityMod: Math.random() * 0.2 + 0.2,
+        targetVelocityMod: Math.random() * 0.5 + 0.5,
+        brightness: Math.random() * 0.5 + 0.5,
+        glowPhase: Math.random() * Math.PI * 2,
+        waveOffsetX: waveAngleOffsetX,
+        waveOffsetY: waveAngleOffsetY,
+        trailAlpha: Math.random() < 0.2 ? 0.03 : 0,
+        alpha: Math.random() * 0.5 + 0.5,
+        fadeIn: true,
+        swayOffsetX: 0,
+        swayOffsetY: 0
+      };
+    }
+
+    for (let i = 0; i < NUM_PARTICLES; i++) {
+      particles.push(createParticle());
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      const dx = e.clientX - mouse.x;
+      const dy = e.clientY - mouse.y;
+      mouse = { x: e.clientX, y: e.clientY, dx, dy };
+    });
+
+    function updateParticles() {
+      const now = performance.now();
+      for (let p of particles) {
+        p.velocityMod += (p.targetVelocityMod - p.velocityMod) * 0.01;
+        if (Math.random() < 0.005) {
+          p.targetVelocityMod = Math.random() * 0.5 + 0.5;
+        }
+
+        const waveX = Math.sin((p.y + now * 0.001) * 0.002 + p.waveOffsetX) * 0.2;
+        const waveY = Math.cos((p.x + now * 0.001) * 0.002 + p.waveOffsetY) * 0.2;
+
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const influenceRadius = 150; // slightly larger area
+
+        if (dist < influenceRadius) {
+          const strength = (1 - dist / influenceRadius);
+          const cappedSpeedX = Math.max(-2, Math.min(2, mouse.dx * 0.1));
+          const cappedSpeedY = Math.max(-2, Math.min(2, mouse.dy * 0.1));
+
+          p.swayOffsetX += (cappedSpeedX * strength - p.swayOffsetX) * 0.2;
+          p.swayOffsetY += (cappedSpeedY * strength - p.swayOffsetY) * 0.2;
+        } else {
+          p.swayOffsetX *= 0.9;
+          p.swayOffsetY *= 0.9;
+        }
+
+        p.x += (p.baseSpeedX + waveX + p.swayOffsetX) * p.velocityMod;
+        p.y += (p.baseSpeedY + waveY + p.swayOffsetY) * p.velocityMod;
+
+        if (p.fadeIn) {
+          p.alpha += 0.01;
+          if (p.alpha >= 1) {
+            p.alpha = 1;
+            p.fadeIn = false;
+          }
+        }
+
+        if (p.x < 0 || p.x > width || p.y < 0 || p.y > height) {
+          Object.assign(p, createParticle());
+        }
+      }
+    }
+
+    function drawParticles() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, width, height);
+
+      const time = performance.now() * 0.002;
+      for (let p of particles) {
+        const glow = 2 + Math.sin(p.glowPhase + time) * 2.5;
+        const flicker = 0.3 + Math.sin(p.glowPhase + time * 0.8) * 0.2;
+        const effectiveBrightness = Math.max(0, Math.min(1, p.brightness * flicker)) * p.alpha;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${effectiveBrightness})`;
+        ctx.shadowColor = `rgba(255, 255, 255, ${effectiveBrightness})`;
+        ctx.shadowBlur = glow;
+        ctx.fill();
+      }
+
+      ctx.shadowBlur = 0;
+    }
+
+    function animate() {
+      updateParticles();
+      drawParticles();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+
+
+  <div id="game">
+    <div id="dialogue"></div>
+    <div id="choices"></div>
+  </div>
+
+  <script>
+    const scenes = {
+      start: {
+        text: "You awaken in darkness. A voice echoes:\n \"Do you remember your name?\"",
+        choices: [
+          { text: "Yes... I think I do.", next: "pathA" },
+          { text: "No. This is the end.", next: "end" },
+          { text: "[GLITCH] I AM ERROR.", next: "glitch" }
+        ]
+      },
+      pathA: {
+        text: "The voice softens:\n\"Then speak it, and walk your path.\"",
+        choices: [
+          { text: "Speak my name.", next: "inputScene" },
+          { text: "Stay silent.", next: "end" },
+          { text: "Question the voice.", next: "null" }
+        ]
+      },
+      end: {
+        text: "The darkness folds in on itself. All is quiet.",
+        choices: []
+      },
+      inputScene: {
+  text: "The voice pauses:\n\"Then tell me — what is your purpose?\"",
+  input: {
+    prompt: "Enter your purpose...",
+    options: {
+      "freedom": "freedomPath",
+      "power": "powerPath"
+    },
+    defaultNext: "unknownPath"
+  }
+},
+freedomPath: {
+  text: "You seek freedom. The chains begin to fall away.",
+  choices: [
+    { text: "Continue", next: "start" }
+  ]
+},
+powerPath: {
+  text: "Power... It corrupts, yet you crave it.",
+  choices: [
+    { text: "Embrace it", next: "https://bojay.be/" }
+  ]
+},
+unknownPath: {
+  text: "The voice is silent. It doesn't understand your answer.",
+  choices: [
+    { text: "Try again", next: "inputScene" },
+    { text: "Forget it", next: "end" }
+  ]
+},
+null: {
+  text: "Come back later",
+  choices: [],
+},
+
+    };
+
+    const dialogueEl = document.getElementById("dialogue");
+    const choicesEl = document.getElementById("choices");
+
+    function typeText(element, text, callback) {
+  element.innerHTML = "";
+  element.style.opacity = 1;
+
+  let index = 0;
+
+  const interval = setInterval(() => {
+    if (index >= text.length) {
+      clearInterval(interval);
+      if (callback) callback();
+      return;
+    }
+
+    const char = text[index];
+    const span = document.createElement("span");
+    span.textContent = char;
+    span.className = "letter";
+    element.appendChild(span);
+
+    // Force layout flush to enable transition
+    setTimeout(() => {
+      span.classList.add("visible");
+    }, 0);
+
+    index++;
+
+    // Slightly delay next letter, but fast enough to show ~2 at once
+  }, 55);
+}
+
+
+    function showChoices(choices) {
+  choicesEl.innerHTML = "";
+  choicesEl.classList.remove("disabled"); // Re-enable interaction
+
+  choices.forEach(choice => {
+    const btn = document.createElement("div");
+    btn.className = "choice";
+    btn.textContent = choice.text;
+    btn.onclick = () => {
+  if (choice.next.startsWith("http") || choice.next.endsWith(".html")) {
+    window.location.href = choice.next;
+  } else {
+    showScene(choice.next);
+  }
+};
+
+    choicesEl.appendChild(btn);
+  });
+
+  // Fade in after short delay
+  setTimeout(() => {
+    choicesEl.style.opacity = 1;
+    choicesEl.style.transform = "translateY(0)";
+  }, 500);
+}
+
+function showInputPrompt(inputConfig) {
+  choicesEl.innerHTML = "";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = inputConfig.prompt || "Enter text...";
+  input.style.padding = "10px";
+  input.style.background = "#111";
+  input.style.border = "1px solid #555";
+  input.style.color = "white";
+  input.style.width = "100%";
+  input.style.fontFamily = "monospace";
+
+  const submit = document.createElement("div");
+  submit.className = "choice";
+  submit.textContent = "Submit";
+
+  submit.onclick = () => {
+    const userInput = input.value.trim().toLowerCase();
+    const next = inputConfig.options[userInput] || inputConfig.defaultNext;
+    if (next.startsWith("http") || next.endsWith(".html")) {
+  window.location.href = next;
+} else {
+  showScene(next);
+}
+
+  };
+
+  choicesEl.appendChild(input);
+  choicesEl.appendChild(submit);
+
+  // Fade in the input section
+  setTimeout(() => {
+    choicesEl.style.opacity = 1;
+    choicesEl.style.transform = "translateY(0)";
+  }, 500);
+}
+
+
+    function showScene(sceneId) {
+  const scene = scenes[sceneId];
+  dialogueEl.innerHTML = "";
+  choicesEl.classList.add("disabled");
+  choicesEl.style.opacity = 0;
+  choicesEl.style.transform = "translateY(20px)";
+  
+  
+
+  setTimeout(() => {
+    if (!scene) return;
+    typeText(dialogueEl, scene.text, () => {
+  if (scene.choices && scene.choices.length > 0) {
+    showChoices(scene.choices);
+  } else if (scene.input) {
+    choicesEl.classList.remove("disabled");
+    showInputPrompt(scene.input);
+  }
+});
+
+  }, 500);
+  
+}
+
+
+    showScene("start");
+  </script>
+</body>
+</html>

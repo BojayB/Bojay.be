@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Page</title>
+    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
+    <style>
+    #ready {
+     position: absolute;
+     top: 5%;
+     left: 5%;
+     font-size: 3rem;
+    }
+    #ct {
+      position: absolute;
+      top: 90%;
+      left: 5%;
+      height: 7%;
+      width: 21%;
+      font-size: 3rem;
+    }
+    #ctr {
+     position: absolute;
+     top: 5%;
+     right: 5%;
+     font-size: 3rem;
+    }
+    #win {
+     position: absolute;
+     display: none;
+     bottom: 50%;
+     left: 50%;
+     font-size: 3rem;
+     transform: translate(-50%, 50%);
+    }
+    #cMenu {
+     position: fixed;
+     display: block;
+     background: rgba(255, 176, 176, 1);
+     border: 3px solid lime;
+     padding: 3px;
+     z-index: 1;
+    }
+    </style>
+  </head>
+  <body>
+  
+  <p id="ready">true</p>
+  <p id="ctr">Counter: 0</p>
+  <p id="win">YOU WIN AT LIFE!</p>
+  <button id="ct">click for based</button>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <div>
+  <button id="cMenu">click me~!</button>
+  </div>
+  
+  
+  
+  <script>
+  const p = document.getElementById("ready");
+  const button = document.getElementById("ct");
+  const ctr = document.getElementById("ctr");
+  const win = document.getElementById("win");
+  let num = 0
+  let t = false;
+  
+   
+  
+  
+  
+  button.addEventListener("click", function () {
+    let pTxt = "";
+    let btnTxt = "";
+    num +=1;
+    ctr.textContent = "Counter: " + num;
+    if (num >= 10) {
+        win.style.display = "block";
+        button.disabled = true;
+        btnTxt = "no more button for you lol";
+    } else if (t){
+      pTxt = "true";
+      btnTxt = "click for based";
+      } else { 
+          pTxt = "based";
+          btnTxt = "click for true";
+        } 
+    p.textContent = pTxt;
+    button.textContent = btnTxt;
+    t = !t;
+  });
+  
+  
+  document.addEventlistener("contextmenu", (e) => {
+    e.preventDefault();
+    
+    style.display;
+    });
+  
+  
+  
+  
+  
+  
+  </script>
+  </body>
+</html>

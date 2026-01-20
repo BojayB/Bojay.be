@@ -1,188 +1,256 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/sakura-vader.css" type="text/css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">  
+    <title>My Anime List</title>
+    <style>
+        body {
+            font-size: 1.8rem;
+            line-height: 1.618;
+            max-width: 100vw;
+            overflow-x: hidden;
+            margin: auto;
+            color: #a384ff;
+            background-color: #260d46;
+            padding: 10px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .anime-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .anime-table th, .anime-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        .anime-table th {
+            background-color: #120c0e;
+        }
+        .status-check {
+            text-align: center;
+        }
+        .status-check input {
+            pointer-events: none;
+        }
+        
+        /* Table styling */
 
-<link rel="stylesheet" href="sakura-vader.css" type="text/css">
-
-<title>Bojab Anime List</title>
-
-<style>
-div.Watching {
-  position: absolute;
-  float: left;
-  left: 5%;
-  top: relative;
-  width: 40%;
+/* General Table Layout */
+/* General Table Layout */
+table {
+    width: 100%;
+ /* Columns take up equal space */
+     table-layout: fixed;
+    border-collapse: collapse;
 }
 
-div.Watched {
-  position: absolute;
-  float: right;
-  right: 5%;
-  top: relative;
-  width: 40%;
+td, th {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+    vertical-align: middle; /* Vertically center content */
+    word-wrap: break-word; /* Prevent long text from overflowing */
+    overflow: hidden; /* Prevent overflow of content */
+    text-overflow: ellipsis;
 }
 
-.navbar {
-  overflow: hidden;
+@media only screen and (max-width: 480px) {
+    /* horizontal scrollbar for tables if mobile screen */
+    .tablemobile {
+        overflow-x: auto;
+        display: block;
+    }
 }
 
-.navbar a {
-  font-size: 16px;
-  color: rgb(235,153,161);
-  padding: 5px 8px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
+/* Ensure images fit properly in cells */
+td img {
+    max-width: 80%; /* Make sure image fits within the cell */
+    height: auto; /* Maintain aspect ratio */
+    display: block;
+    margin: 0 auto; /* Center image in cell */
 }
 
-document.body.style.overflow = 'hidden';
-</style>
+/* Fix body width issues */
+body {
+    max-width: 100vw;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
 
+/* For smaller screens */
+@media (max-width: 600px) {
+    td img {
+        max-width: 50px; /* Smaller image size on mobile */
+    }
+
+    td, th {
+        padding: 5px; /* Adjust padding for small screens */
+    }
+}
+        
+        
+        
+        
+        
+
+
+.joe {
+font-family: Helvetica Bold, sans-serif;
+}
+    </style>
 </head>
 <body>
-
 <header>
 <a href="/"><h1>Bojab Website</h1></a>
 <p>Simple as frick.</p>
 
 
 <div class="navbar">
-  <a href="/">Home</a>
-  <a href="/about.html">About</a>
-  <a href="games.html">Games</a>
-  <a href="blog.html">Blog</a>
-  <a href="mal.html">MAL</a>
-  <a href="discord.html">Discord</a>
-  
+  <a href="/"><h3><small>Home</small></h3></a>
+  <a href="/about.html"><h3><small>About</small></h3></a>
+  <a href="/social.html"><h3><small>Social</small></h3></a>
+  <a href="blog.html"><h3><small>Blog</small></h3></a>
+  <a href="mal.html"><h3><small>MAL</small></h3></a>
+  <a href="music.html"><h3><small>Loops</small></h3></a>
+  <a href="discord.html"><h3><small>Discord</small></h3></a>
+  <a href="https://soundcloud.com/vinyl_lover20" target="_blank"><h3><small>Soundcloud</small></h3></a>
+  <a href="https://paypal.me/LiamDaws0n?locale.x=en_US" target="_blank"><h3><small>Support</small></h3></a>
+  <hr>
 
 </div>  
-</header>
-<hr>
 
-  
-  <h2> MY OPINION MAY BE BIASED BECAUSE I LOVE OVERPOWERED MAIN CHARACTERS <small><sub>and ecchi...</sub></small></h2>
-  <h4>Not ranking the anime I'm watching until I've watched it all, even if it may take forever or I already know how good it is. <small> I'm kinda lazy..</small></h4>
-  
-    
-    
-    
-    
-    
-    
-    <div class="Watching">
-    <h1>Watching</h1>
-    <hr>
-    
-    
-    <a href="https://www.crunchyroll.com/dont-toy-with-me-miss-nagatoro" target="_blank">
-    <h3> Ijiranaide, Nagatoro-san [Don't Toy/Mess With Me, Miss Nagatoro] </h3>
-    <img src="https://cdn.animenewsnetwork.com/thumbnails/max650x650/cms/news.4/166060/nagatorosan_key.jpg"> </a>
-    <p> It's like Redo of Healer if there was no revenge or porn. Just domineering girl torturing boy. I love it, but I'm not going to go into as much detail as I did with Redo of Healer. Go watch it. As of writing, it <strike>is currently ongoing with only 3 episodes aired.</strike> has finished airing with 13 episodes. <strike>It shouldn't be too hard to catch up. Airs on Saturdays.</strike></p>
-    <h2>8/10</h2>
-    
-    <a href="https://www.crunchyroll.com/koikimo" target="_blank">
-    <h3> Koikimo </h3>
-    <img src="https://img1.ak.crunchyroll.com/i/spire1/ebd9987e75ada1595d044faca6e70d8a1616987371_full.jpg"></a>
-    <p> Koikimo is a romance anime, about a man who's life get's saved by a highschool girl, and immediately falls in love. If you like romance, the image might help you decide if you want to watch it or not. That's what I do when choosing a new anime. Look at the image, read the description. <small>I feel like we all do this...</small></p>
-    <h1>9.5/10</h1>
-    
-      <a href="https://www.crunchyroll.com/oddtaxi" target="_blank">
-    <h3> OddTaxi </h3>
-    <img src="https://img1.ak.crunchyroll.com/i/spire4/d2e54e88d519597cafee830d7b34dea21617602847_full.jpg"></a>
-    <p> OddTaxi is ALSO a very interesting anime. It's about a taxi driver who's life gets interrupted by many once a local highschool girl goes missing. I reccomend you watch it. New episodes on saturdays I believe. I could just be confusing these with Nagatoro airdates.</p>
-    
-    <a href="https://www.crunchyroll.com/one-piece" target="_blank">
-    <h3> One Piece </h3>
-    <img src="https://img1.ak.crunchyroll.com/i/spire4/8056a82e973dde98ebb82abd39dc69731564519729_full.jpg"></a>
-    <p> I'm sure you've heard of this. There are 974 episodes out to date and it is ongoing. I am currently watching at LEAST 1 episode a day with one of my friends. I'm not allowed to break the streak until we're caught up. It might take me a few months, it might take me a few years, who knows?</p>
-    
-    <a href="https://www.crunchyroll.com/that-time-i-got-reincarnated-as-a-slime" target="_blank">
-    <h3> Slime Tensei [That Time I Got Reincarnated As A Slime </h3>
-    <img src="https://img1.ak.crunchyroll.com/i/spire3/318f6f33529b0058bd5f1916f6fd1a521610491107_full.jpg"> </a>
-    <h2> <strike>Currently on hiatus. Half of the season has aired so they're taking a break for a little while.</strike> The second half of the season has been airing and I have not started it yet.</h2>
-   <p> Description was too long to look normal on this page, click <a href="slime.html"> here </a> to read more.</p>
-    <h1><strong>10/10</strong></h1>
-    
-    
-    <a href="https://www.crunchyroll.com/to-your-eternity" target="_blank">
-    <h3> To Your Eternity </h3>
-    <img src="https://img1.ak.crunchyroll.com/i/spire4/1f4445e3383ff8565d5514875d4e90831619462690_full.jpg"></a>
-    <p> I could've SWORN I talked about this already, so here it is now. To Your Eternity is a heartfelt anime, full of love, sadness, betrayal, love?, and [adjective]. I find it very fascinating to watch, and there will be 20 episodes! I can't express the anime here, so go and watch it for yourself. As of writing, there are 6 episodes out and more to come every Saturday?
-    </div>
-    
-  
-    
-    <div class="Watched">
-    <h1>Watched</h1>
-    <hr>
-    
-    <a href="https://www.crunchyroll.com/a-centaurs-life" target="_blank">
-    <h3> A Centaur's Life </h3>
-    <img src="https://m.media-amazon.com/images/M/MV5BMDJlNGU5YzktOGJlMi00NzdmLWIxYzMtZjU4YmVkN2Q5OWE1XkEyXkFqcGdeQXVyMjI5MjU5OTI@._V1_.jpg"> </a>
-    <p> I remember that I watched this, but only remember like, 14 frames. Probably good but I'd have to rewatch for a better review. I'll give it a pity <strong><big> 6/10</big></strong> for now </p>
-    
-    <a href="https://www.crunchyroll.com/a-certain-magical-index" target="_blank">
-    <h3> A Certain Magical Index </h3>
-    <img src="https://upload.wikimedia.org/wikipedia/en/0/07/Index_III.jpg"> </a>
-    <p> My friend would watch this while screensharing when I would call with him. It's been a few years but I remember it being pretty interesting plustheres a guy with a funny skeleton shirt.</p><h3> 7/10</h3>
-    
-    <a href="https://www.crunchyroll.com/akame-ga-kill" target="_blank">
-    <h3> Akame Ga Kill </h3>
-    <img src="https://m.media-amazon.com/images/M/MV5BZjU2ZDZkYmMtYTA3Yi00NTZkLTgzYjgtOTRhMTFiOWFkODZmXkEyXkFqcGdeQXVyNjkyODc3NjQ@._V1_.jpg"> </a>
-    <p> I started it..... It seemed interesting and I will more than likely pick it back up one day.</p><h4> 7/10 </h4>
-    
-    <a href="sol.html">
-    <h3> Akira </h3>
-    <img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcShVdCMTAO2oW7TO5DbMAsG_txrF1LpFRbZH8ZuJNFLQdViPDLh"> </a>
-    <p> Yes, movies are going in here too! Akira was great, taking place in post-apocalyptic Neo Tokyo with an awesome cyberpunk theme. I think it was really cool and definitely recommend. </p>
-    <h3>7/10</h3>
-    
-    
-    <a href="https://www.crunchyroll.com/aldnoahzero" target="_blank">
-    <h3> ALDNOAH.ZERO </h3>
-    <img src="https://img1.ak.crunchyroll.com/i/spire3/1ee8628337834531f6427a97248129871420484061_full.jpg"> </a>
-    <p> Watched this years ago. I watched it all so it must've been interesting.</p><h4> 6/10 </h4>
-    
-    <a href="https://www.crunchyroll.com/assassination-classroom" target="_blank">
-    <h3> Assassination Classroom </h3>
-    <img src="https://derf9v1xhwwx1.cloudfront.net/image/upload/oth/FunimationStoreFront/1590975/Japanese/1590975_Japanese_ShowKeyart_bda10eeb-fd94-4369-953c-d73e55588d65.jpg"> </a>
-    <p> I also watched this a few years ago and immediately put it in my top favourite anime in my head, but over the years I've forgotten about it, so I've decided to put it in my hidden favourites in my head. Has Dio's voice actor in it so automatically +5/10. Has a really good story and kept me entertained the entire time. I totally reccommend this anime to anyone who reads this.</p><h1> 14/10 </h1>
-    
-    <a href="https://www.crunchyroll.com/astarottes-toy" target="_blank">
-    <h3> Astarotte's Toy </h3>
-    <img src="https://www.animenewsnetwork.com/images/encyc/A12104-10.jpg">
-    </a>
-    <p> I watched it a few years ago. Story was okay but could've been better. Loli harem slice of life shit.</p><h4> 5/10</h4>
-    
-    <a href="https://www.crunchyroll.com/bakemonogatari" target="_blank">
-    <h3> Bakamonogatari </h3>
-    <img src="https://img1.ak.crunchyroll.com/i/spire3/2298cd3152d723592023777d5157a5d11347307796_full.jpg"></a>
-    <p> I started watching it...</p> <h5>3/10</h5>
-    
-    <a href="https://www.crunchyroll.com/berserk" target="_blank">
-    <h3> Berserk </h3>
-    <img src="https://img1.ak.crunchyroll.com/i/spire3/43ea3545f4cd269d77ab1459b32c23921493158315_full.jpg"></a>
-     <h1> Rest in peace Kento Miura :(</h1>
-    <p> I <big>HIGHLY </big>suggest that you watch this. This has a permanent spot as my second favourite anime ever. The main character is OP ASF, has a LONG ass sword, fights in medievil WARS, FUCKS some CHICK, there's BOOBS, there's DEMONS, there are demons getting KILLED, it's BLOODY and GORY, there are DEMONS, there are probably demons getting FUCKED, and the (spoilers, please don't read until you've watched AT LEAST the three Golden Age Ark movies on Netflix, and at that point you sould probably watch Berserk 2016 and 2017) <spoiler> MAIN CHARACTER GETS HIS ARM RIPPED OFF AND GETS BRANDED BY DEMONS!!! And in 2016 we find out Casca has like, brain damage or some shit and Guts goes to find her the whole fkn time and in 2017 Guts dawns the fucking BERSERKER ARMOR in like the last episode its sad I want more</spoiler></p>
-   
-    <h1> 20/10 </h1>
-    
-    
-    
-    <a href="ROH.html">
-    <h3> Kaifuku Jutsushi no Yarinaoshi (Uncensored) [Redo of Healer] </h3>
-    <img src="https://m.media-amazon.com/images/M/MV5BZDg5OTgzNTEtMDJmOS00MWMzLWFmYmQtNTNlZjg5YjI1YjRiXkEyXkFqcGdeQXVyMzgxODM4NjM@._V1_.jpg"> </a>
-    <p> Phenominal anime. Seinen anime with relitively no censorship other than what's required for Japanese marketing. <a href="ROH.html">Click for more information.</a> </p>
-    <h1>9.5/10</h1>
-  </div>
-    
-    
-    
-    
-    
-    
-   
-  </body>
+</header>
+
+<h1>Here is My Anime List :)</h1>
+<p><small>It's kinda difficult to comprehend on mobile, but it's good <i>enough</i>, so whatever. It also isn't always up to date, sometimes I forget!</small></p>
+<table class="anime-table">
+  <thead>
+    <tr>
+      <th>Cover Image</th> <!-- Change column header -->
+      <th>Episodes Watched</th>
+      <th># Of Episodes</th>
+      <th>Watching</th>
+      <th>Rewatching</th>
+      <th>Completed</th>
+      <th>Paused</th>
+      <th>Dropped</th>
+      <th>Planning</th>
+    </tr>
+  </thead>
+  <tbody id="anime-list">
+    <!-- Anime rows will be dynamically inserted here -->
+  </tbody>
+</table>
+<script>
+    async function fetchAnimeList() {
+        const query = `
+  query ($userId: Int) {
+    MediaListCollection(userId: $userId, type: ANIME) {
+      lists {
+        name
+        entries {
+          media {
+            title {
+              romaji
+            }
+            episodes
+            coverImage {
+              large
+            }
+            siteUrl
+          }
+          status  # Fetch the user's specific status for this anime
+          progress # Fetch the number of episodes watched by the user
+        }
+      }
+    }
+  }
+`;
+
+        const variables = {
+            userId: 154492 // Replace with your AniList user ID
+        };
+
+        try {
+            const response = await fetch('https://graphql.anilist.co', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: query,
+                    variables: variables
+                })
+            });
+
+            const result = await response.json();
+            displayAnimeList(result.data.MediaListCollection.lists);
+        } catch (error) {
+            console.error('Error fetching the anime list:', error);
+        }
+    }
+
+    function displayAnimeList(lists) {
+        const animeListElement = document.getElementById('anime-list');
+        animeListElement.innerHTML = ''; // Clear previous list
+
+        // Define the desired order of statuses
+        const statusOrder = ['CURRENT', 'REWATCHING', 'PAUSED', 'COMPLETED', 'PLANNING', 'DROPPED'];
+
+        // Flatten all entries from lists
+        const allEntries = lists.flatMap(list => list.entries);
+
+        // Sort the entries based on the status order
+        const sortedEntries = allEntries.sort((a, b) => {
+            return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+        });
+
+        // Loop through the sorted entries and create table rows
+        sortedEntries.forEach(entry => {
+            const animeRow = document.createElement('tr');
+
+            // Anime cover image cell
+            const coverImageCell = `<td><a href="${entry.media.siteUrl}" target="_blank"><img src="${entry.media.coverImage.large}" alt="${entry.media.title.romaji} cover"></a></td>`;
+            
+            // User-specific status text
+            const statusTextCell = `<td>${entry.progress || 0}</td>`;
+            
+            // Number of episodes
+            const episodesCell = `<td>${entry.media.episodes || "N/A"}</td>`;
+
+            // Checkmark cells for statuses
+            const statusCheckCell = (status) => `
+                <td class="status-check">
+                    <input type="checkbox" ${entry.status === status ? 'checked' : ''}>
+                </td>
+            `;
+
+            // Create row with all the data
+            animeRow.innerHTML = `
+                ${coverImageCell}
+                ${statusTextCell}
+                ${episodesCell}
+                ${statusCheckCell('CURRENT')}
+                ${statusCheckCell('REWATCHING')}
+                ${statusCheckCell('COMPLETED')}
+                ${statusCheckCell('PAUSED')}
+                ${statusCheckCell('PLANNING')}
+                ${statusCheckCell('DROPPED')}
+            `;
+
+            animeListElement.appendChild(animeRow);
+        });
+    }
+
+    fetchAnimeList();
+</script>
+
+</body>
 </html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Messages</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #2c2f33;
+        color: #ffffff;
+        margin: 0;
+        padding: 20px;
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    li {
+        background: #23272a;
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
+
+</head>
+<body>
+    <h1>Live Discord Messages</h1>
+    <ul id="messages"></ul>
+
+    <script>
+        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1314386795286233149/bZCoikL224EW3YdPm-sYH8ktTrcuKGZNka49s_vUkN9szLkg7RYDOHtPi0Ihd3CnR9ek'; // Replace with your webhook URL
+
+        async function fetchMessages() {
+            try {
+                // Fetch the latest messages (simulate for Neocities using static data for now)
+                const response = await fetch(WEBHOOK_URL); // Webhooks don't support GET directly!
+                const data = await response.json();
+
+                // Update the message list on the page
+                const messageList = document.getElementById('messages');
+                messageList.innerHTML = '';
+
+                data.forEach((msg) => {
+                    const item = document.createElement('li');
+                    item.textContent = `${msg.username}: ${msg.content}`;
+                    messageList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Failed to fetch messages:', error);
+            }
+        }
+
+        // Fetch messages every 5 seconds
+        setInterval(fetchMessages, 5000);
+    </script>
+</body>
+</html>

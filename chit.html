@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>can't hold it together!! >_<</title>
+<script src="aecho.js"></script>
+<body>
+
+<script src="aecho.js"></script>
+
+<div class="hdn">
+  <a href="kuromyx.html"><img src="../images/kuromicore.jpg" height="100%"></a>
+</div>
+
+<div class="abs">
+  <button class="button" onclick="startAEcho()">Click here for audio</button>
+  <button class="button" onclick="AEchoAudioEngine.stop()">Stop after loop</button>
+</div>
+
+<script>
+function startAEcho() {
+  AEchoAudioEngine.resumeIfSuspended();
+  AEchoAudioEngine.init({
+    intro: "../audio/chiti.mp3",
+    loop: "../audio/chitl.mp3",
+    exit: "",
+    autoLoop: true,
+    hasExit: false,
+    strictTiming: false,
+    title: "can't hold it together!! >_<"
+  });
+}
+</script>
+
+<p> I legit forgot I made a whole ass thing specifically for loops with 3 audio files and didn't make an outro for these next few and don't want to go back and do that maybe ever. </p>
+</body>
+</html>

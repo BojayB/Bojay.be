@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkpoint-style Dithered Background</title>
+  
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050109; /* deep dark purple-ish */
+      font-family: var(--ui-font), system-ui, sans-serif;
+      letter-spacing: 0.01em;
+    }
+
+    #bg {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      image-rendering: pixelated;   /* keep it crunchy */
+      image-rendering: crisp-edges;
+    }
+    
+    #paletteToggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  background: rgba(10, 10, 20, 0.85);
+  color: #f0eaff;
+  border: 1px solid rgba(200, 180, 255, 0.4);
+  border-radius: 999px;
+  cursor: pointer;
+  z-index: 10;
+}
+#paletteToggle:hover {
+  background: rgba(30, 20, 50, 0.9);
+}
+
+#controls {
+ position: fixed;
+ bottom: 12px;
+ left: 12px;
+ padding: 8px 10px;
+ background: rgba(5, 5, 15, 0.9);
+ color: #f5f0ff;
+ font-family: system-ui, sans-serif;
+ font-size: 11px;
+ border-radius: 10px;
+ border: 1px solid rgba(180, 160, 240, 0.4);
+ z-index: 20;
+ max-width: 340px;
+}
+
+#controls h3 {
+  margin: 0 0 6px 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#controls .row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+#controls .row span {
+  min-width: 60px;
+  opacity: 0.8;
+}
+
+#controls label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+}
+
+#controls input[type="range"] {
+  width: 80px;
+}
+
+#overlayText  {
+  position: fixed;
+  bottom: 50vh;
+  right: 50vw;
+  z-index: 15; /* above canvas, below controls if you want */
+  font-family: system-ui, sans-serif;
+  font-size: 1em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(230, 230, 255, 0.9);
+  text-shadow: 0 0 8px rgba(80, 120, 255, 0.7);
+  pointer-events: none; /* so clicks go through to canvas/buttons */
+}
+
+#overlayText .music {
+  position: fixed;
+  bottom: 1vh;
+  right: 1vw;
+  z-index: 15; /* above canvas, below controls if you want */
+  font-family: system-ui, sans-serif;
+  font-size: 1em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(230, 230, 255, 0.9);
+  text-shadow: 0 0 8px rgba(80, 120, 255, 0.7);
+  pointer-events: none; /* so clicks go through to canvas/buttons */
+}
+
+.ginto-hero {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+
+  font-family: 'Outfit', system-ui, sans-serif; /* uses the Google font you linked */
+  font-weight: 1000;
+  font-size: clamp(15rem, 7vw, 1rem);
+  letter-spacing: -0.01em;
+  line-height: 0.4;
+  margin: 0;
+
+  color: rgba(230, 230, 255, 0.95);
+  text-shadow: 0 0 20px rgba(80, 120, 255, 0.7);
+}
+
+
+
+  </style>
+  
+
+  
+  
+</head>
+<body>
+<button id="paletteToggle">Toggle Palette</button>
+
+
+  <canvas id="bg"></canvas>
+
+<div class="ginto-hero">CHECKPOINT</div>
+
+
+<div id="overlayText">
+  <div class="music">Music by Exyl</div>
+
+
+
+
+</div>
+<div id="controls">
+  <h3>Palette Controls</h3>
+
+  <div class="row">
+    <span>Shadow</span>
+    <label>R <input id="shadowR" type="range" min="0" max="255" step="1"></label>
+    <label>G <input id="shadowG" type="range" min="0" max="255" step="1"></label>
+    <label>B <input id="shadowB" type="range" min="0" max="255" step="1"></label>
+  </div>
+
+  <div class="row">
+    <span>Highlight</span>
+    <label>R <input id="highlightR" type="range" min="0" max="255" step="1"></label>
+    <label>G <input id="highlightG" type="range" min="0" max="255" step="1"></label>
+    <label>B <input id="highlightB" type="range" min="0" max="255" step="1"></label>
+  </div>
+
+  <div class="row">
+    <span>Palette A RGB</span>
+  <label>R <input id="aScaleR" type="range" min="0" max="200" step="1"></label>
+  <label>G <input id="aScaleG" type="range" min="0" max="200" step="1"></label>
+  <label>B <input id="aScaleB" type="range" min="0" max="200" step="1"></label>
+  </div>
+  
+  <div class="row">
+    <span>Mix A→B</span>
+    <input id="mixSlider" type="range" min="0" max="100" step="1">
+  </div>
+  
+  
+  <div class="row">
+    <span>Alpha</span>
+    <input id="alphaSlider" type="range" min="0" max="100" step="1">
+  </div>
+  
+
+  
+</div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  <script>
+function setFont(mode) {
+  document.body.className = mode;
+  localStorage.setItem('fontMode', mode);
+}
+
+window.onload = () => {
+  const saved = localStorage.getItem('fontMode');
+  if (saved) document.body.className = saved;
+};
+
+  
+  
+  
+  
+  
+  const canvas = document.getElementById("bg");
+  const ctx = canvas.getContext("2d");
+
+  // We render at a low "logical" resolution and upscale it.
+  const LOGICAL_WIDTH  = 480;
+  const LOGICAL_HEIGHT = 270;
+
+  const offscreen = document.createElement("canvas");
+  offscreen.width  = LOGICAL_WIDTH;
+  offscreen.height = LOGICAL_HEIGHT;
+  const offctx = offscreen.getContext("2d");
+  let imageData = offctx.createImageData(LOGICAL_WIDTH, LOGICAL_HEIGHT);
+  let pixels = imageData.data;
+
+  // 8x8 Bayer matrix for ordered dithering (values 0–63).
+  const BAYER_8 = [
+    [ 0, 48, 12, 60,  3, 51, 15, 63],
+    [32, 16, 44, 28, 35, 19, 47, 31],
+    [ 8, 56,  4, 52, 11, 59,  7, 55],
+    [40, 24, 36, 20, 43, 27, 39, 23],
+    [ 2, 50, 14, 62,  1, 49, 13, 61],
+    [34, 18, 46, 30, 33, 17, 45, 29],
+    [10, 58,  6, 54,  9, 57,  5, 53],
+    [42, 26, 38, 22, 41, 25, 37, 21]
+  ];
+
+  function resizeCanvas() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  // =====================
+  // Palette A: original sine-based
+  // =====================
+  const PALETTE_A_SCALE = { r: 1.0, g: 1.0, b: 1.0 }; // 1.0 = no tint
+  
+  function paletteA(bright, yNorm) {
+    const yShift = (yNorm - 0.5) * 0.4;
+
+    let r = 19 + 40 * Math.sin(6.283 * (bright * 0.8 + 0.15 + yShift));
+    let g = 30 + 35 * Math.sin(6.283 * (bright * 0.7 + 0.55 - yShift));
+    let b = 47 + 90 * Math.sin(6.283 * (bright * 1.1 + 0.05));
+
+    //Apply user tint scaling
+    r *= PALETTE_A_SCALE.r;
+    g *= PALETTE_A_SCALE.g;
+    b *= PALETTE_A_SCALE.b;
+    
+    return [
+      Math.max(0, Math.min(255, r)),
+      Math.max(0, Math.min(255, g)),
+      Math.max(0, Math.min(255, b))
+    ];
+  }
+
+  // =====================
+  // Palette B: shadow → highlight (user-tweakable)
+  // =====================
+  const SHADOW_COLOR = { r: 5,   g: 20,  b: 40  };
+  const HIGHLIGHT_COLOR = { r: 255, g: 220, b: 255 };
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function paletteB(bright, yNorm) {
+    const vTilt = (yNorm - 0.5) * 0.2;
+    let t = bright + vTilt;
+    t = Math.max(0, Math.min(1, t));
+
+    const r = lerp(SHADOW_COLOR.r, HIGHLIGHT_COLOR.r, t);
+    const g = lerp(SHADOW_COLOR.g, HIGHLIGHT_COLOR.g, t);
+    const b = lerp(SHADOW_COLOR.b, HIGHLIGHT_COLOR.b, t);
+
+    return [r, g, b];
+  }
+
+  // =====================
+  // Palette mixer: A → B
+  // =====================
+  let paletteMix = 0;    // 0 = pure A, 1 = pure B
+  let globalAlpha = 1.0; // 0–1, controlled by slider
+
+  function palette(bright, yNorm) {
+    const cA = paletteA(bright, yNorm);
+    const cB = paletteB(bright, yNorm);
+
+    const t = paletteMix;
+
+    const r = cA[0] + (cB[0] - cA[0]) * t;
+    const g = cA[1] + (cB[1] - cA[1]) * t;
+    const b = cA[2] + (cB[2] - cA[2]) * t;
+
+    return [r, g, b];
+  }
+
+  // =====================
+  // UI + persistence
+  // =====================
+  const paletteToggleBtn = document.getElementById("paletteToggle");
+
+  const shadowRInput     = document.getElementById("shadowR");
+  const shadowGInput     = document.getElementById("shadowG");
+  const shadowBInput     = document.getElementById("shadowB");
+  const highlightRInput  = document.getElementById("highlightR");
+  const highlightGInput  = document.getElementById("highlightG");
+  const highlightBInput  = document.getElementById("highlightB");
+  const mixSlider        = document.getElementById("mixSlider");
+  const alphaSlider      = document.getElementById("alphaSlider");
+  const aScaleRInput     = document.getElementById("aScaleR");
+  const aScaleGInput     = document.getElementById("aScaleG");
+  const aScaleBInput     = document.getElementById("aScaleB");
+
+
+  const STORAGE_KEY = "checkpointPaletteConfig_v1";
+
+  function saveConfig() {
+    const config = {
+      shadow: { ...SHADOW_COLOR },
+      highlight: { ...HIGHLIGHT_COLOR },
+      aScale: { ... PALETTE_A_SCALE },
+      paletteMix,
+      globalAlpha
+    };
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    } catch (e) {
+      // ignore if storage blocked
+    }
+  }
+
+  function loadConfig() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const cfg = JSON.parse(raw);
+      if (cfg.shadow) {
+        SHADOW_COLOR.r = cfg.shadow.r ?? SHADOW_COLOR.r;
+        SHADOW_COLOR.g = cfg.shadow.g ?? SHADOW_COLOR.g;
+        SHADOW_COLOR.b = cfg.shadow.b ?? SHADOW_COLOR.b;
+      }
+      if (cfg.highlight) {
+        HIGHLIGHT_COLOR.r = cfg.highlight.r ?? HIGHLIGHT_COLOR.r;
+        HIGHLIGHT_COLOR.g = cfg.highlight.g ?? HIGHLIGHT_COLOR.g;
+        HIGHLIGHT_COLOR.b = cfg.highlight.b ?? HIGHLIGHT_COLOR.b;
+      }
+      if (cfg.aScale) {
+        PALETTE_A_SCALE.r = cfg.aScale.r ?? PALETTE_A_SCALE.r;
+        PALETTE_A_SCALE.g = cfg.aScale.g ?? PALETTE_A_SCALE.g;
+        PALETTE_A_SCALE.b = cfg.aScale.b ?? PALETTE_A_SCALE.b;
+      }
+      if (typeof cfg.paletteMix === "number") {
+        paletteMix = cfg.paletteMix;
+      }
+      if (typeof cfg.globalAlpha === "number") {
+        globalAlpha = cfg.globalAlpha;
+      }
+    } catch (e) {
+      // bad JSON? ignore
+    }
+  }
+
+  function syncUIFromState() {
+    shadowRInput.value = SHADOW_COLOR.r;
+    shadowGInput.value = SHADOW_COLOR.g;
+    shadowBInput.value = SHADOW_COLOR.b;
+
+    highlightRInput.value = HIGHLIGHT_COLOR.r;
+    highlightGInput.value = HIGHLIGHT_COLOR.g;
+    highlightBInput.value = HIGHLIGHT_COLOR.b;
+    
+    aScaleRInput.value = Math.round(PALETTE_A_SCALE.r * 100);
+    aScaleGInput.value = Math.round(PALETTE_A_SCALE.g * 100);
+    aScaleBInput.value = Math.round(PALETTE_A_SCALE.b * 100);
+
+    mixSlider.value   = Math.round(paletteMix * 100);
+    alphaSlider.value = Math.round(globalAlpha * 100);
+  }
+
+  function syncStateFromUI() {
+    SHADOW_COLOR.r = parseInt(shadowRInput.value, 10);
+    SHADOW_COLOR.g = parseInt(shadowGInput.value, 10);
+    SHADOW_COLOR.b = parseInt(shadowBInput.value, 10);
+
+    HIGHLIGHT_COLOR.r = parseInt(highlightRInput.value, 10);
+    HIGHLIGHT_COLOR.g = parseInt(highlightGInput.value, 10);
+    HIGHLIGHT_COLOR.b = parseInt(highlightBInput.value, 10);
+    
+    PALETTE_A_SCALE.r = parseInt(aScaleRInput.value, 10) / 100;
+    PALETTE_A_SCALE.g = parseInt(aScaleGInput.value, 10) / 100;
+    PALETTE_A_SCALE.b = parseInt(aScaleBInput.value, 10) / 100;
+
+    paletteMix  = parseInt(mixSlider.value, 10) / 100;
+    globalAlpha = parseInt(alphaSlider.value, 10) / 100;
+
+    saveConfig();
+  }
+
+  // load saved config and sync sliders to it
+  loadConfig();
+  syncUIFromState();
+
+  [
+    shadowRInput, shadowGInput, shadowBInput,
+    highlightRInput, highlightGInput, highlightBInput,
+    aScaleRInput, aScaleGInput, aScaleBInput,
+    mixSlider, alphaSlider
+  ].forEach(input => {
+    input.addEventListener("input", syncStateFromUI);
+  });
+
+  // =====================
+  // Animated palette toggle button
+  // =====================
+  let targetPaletteMix = 0;
+
+  function animatePaletteTransition(toValue) {
+    const duration = 1200; // ms
+    const startValue = paletteMix;
+    const startTime = performance.now();
+
+    function step(now) {
+      const t = Math.min(1, (now - startTime) / duration);
+      const eased = t * t * (3 - 2 * t);
+
+      paletteMix = startValue + (toValue - startValue) * eased;
+      mixSlider.value = Math.round(paletteMix * 100);
+
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        saveConfig();
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  paletteToggleBtn.addEventListener("click", () => {
+    targetPaletteMix = targetPaletteMix === 0 ? 1 : 0;
+    animatePaletteTransition(targetPaletteMix);
+  });
+
+  // =====================
+  // Render loop
+  // =====================
+  function render(timeMs) {
+    const t = timeMs * 0.001; // seconds
+    let i = 0;
+
+    for (let y = 0; y < LOGICAL_HEIGHT; y++) {
+      const ny = y / LOGICAL_HEIGHT - 0.5;
+      for (let x = 0; x < LOGICAL_WIDTH; x++) {
+        const nx = x / LOGICAL_WIDTH - 0.5;
+
+        let v = 0;
+        v += Math.sin((nx * 4.0 + t * 0.15) * Math.PI * 2);
+        v += Math.sin((ny * 5.0 - t * 0.09) * Math.PI * 2);
+        v += Math.sin(((nx + ny) * 3.0 + t * 0.08) * Math.PI * 2);
+        v += Math.sin(((nx - ny) * 6.0 - t * 0.08) * Math.PI * 2);
+        v /= 4;
+
+        let bright = 0.5 + 0.5 * v;
+
+        const noise = (Math.random() - 0.5) * 0.10;
+        bright = Math.max(0, Math.min(1, bright + noise));
+
+        const bx = x & 7;
+        const by = y & 7;
+        const threshold = (BAYER_8[by][bx] + 0.5) / 64;
+        const dithered = bright + (bright - threshold) * 0.35;
+        const finalB = Math.max(0, Math.min(1, dithered));
+
+        const [r, g, b] = palette(finalB, ny + 0.5);
+
+        pixels[i++] = r;
+        pixels[i++] = g;
+        pixels[i++] = b;
+        pixels[i++] = 255;
+      }
+    }
+
+    offctx.putImageData(imageData, 0, 0);
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const scale = Math.max(
+      canvas.width / LOGICAL_WIDTH,
+      canvas.height / LOGICAL_HEIGHT
+    );
+    const drawW = LOGICAL_WIDTH * scale;
+    const drawH = LOGICAL_HEIGHT * scale;
+    const dx = (canvas.width  - drawW) * 0.5;
+    const dy = (canvas.height - drawH) * 0.5;
+
+    ctx.save();
+    ctx.globalAlpha = globalAlpha;
+    ctx.drawImage(offscreen, dx, dy, drawW, drawH);
+    ctx.restore();
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+</script>
+
+</body>
+</html>

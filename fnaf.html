@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    background-color: rgb(44, 27, 65);
+    color: rgb(187, 135, 255);
+    font-size: x-large;
+    overflow: hidden;
+}
+button {
+    background-color: rgb(44, 27, 65);
+    color: rgb(187, 135, 255);
+}
+input {
+    background-color: transparent;
+    color: rgb(187, 135, 255);
+}
+.italic {
+    font-style: italic;
+}
+.hidden {
+    position: absolute;
+    visibility: hidden;
+}
+.visible {
+    visibility: visible;
+}
+.fnafvideolol {
+    position: absolute;
+    width: 100%;
+    max-height: 95vh;
+}
+
+</style>
+</head>
+<body>
+<span id="disT">Bro what are you doing here, havent you heard? No?..</span>
+<span id="distI" class="italic"></span>
+<span id="two"></span>
+<br>
+<br>
+<video class="hidden" id="fnafIn" preload="auto">
+<source src="videos/fnafi.webm" id="source">
+</video>
+
+<input id="name" type="text" class="hidden">
+<button id="disB">Click</button>
+
+
+<script>
+const disT = document.getElementById("disT");
+const distI = document.getElementById("distI");
+const dist2 = document.getElementById("two");
+const disB = document.getElementById("disB");
+const name = document.getElementById("name");
+const hidden = document.getElementsByClassName("hidden");
+const fnafIn = document.getElementById("fnafIn");
+const fnafOut = document.getElementById("fnafOut");
+const vid = document.getElementById('source');
+let disP = "";
+let dispI ="";
+let disp2 = "";
+let dispB = "";
+let menu = true;
+let i = 0;
+let i2 = 0;
+disB.addEventListener("click", function () {
+    if (i === 0) {
+        disP = "There's something I need to warn you about...";
+        dispB = "???";
+    } else if (i === 1) {
+        disP = "Five night at freddy";
+        dispB = "..What?";
+    } else if (i === 2) {
+        //document.body.style.backgroundColor = "#FFFFFF";
+        disB.classList.add("hidden");
+        fnafIn.classList.remove("hidden");
+        fnafIn.classList.add("fnafvideolol");
+        fnafIn.addEventListener('ended', vidPlayback, false);
+        function vidPlayback(e) {
+            if (!e) {
+                e = window.event;
+            } else if (vid.src.endsWith('fnafl2.webm')) {
+                fnafIn.play();
+            }
+            vid.setAttribute('src', "videos/fnafl2.webm");
+            document.body.style.backgroundColor = "#000";
+            fnafIn.load();
+            fnafIn.play();
+        }
+        
+        fnafIn.play();
+    }
+    
+    disT.textContent = disP;
+    disB.textContent = dispB;
+    distI.textContent = dispI;
+    dist2.textContent = disp2;
+    ++i;
+})
+</script>
+
+</body>
+</html>

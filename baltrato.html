@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balatro Clone</title>
+  <style>
+    /* General Styles */
+    body, html {
+      font-family: Arial, sans-serif;
+      background: transparent;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      z-index: -1; /* Place behind other content */
+    }
+    
+    h1, p {
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #61dafb;
+      color: #282c34;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    button:hover {
+      background-color: #21a1f1;
+    }
+
+    /* Game Styles */
+    #game {
+      text-align: center;
+      width: 100%;
+    }
+    #score-board {
+      margin-bottom: 20px;
+    }
+    #player-hand {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .card {
+      width: 60px;
+      height: 90px;
+      background-color: white;
+      color: black;
+      margin: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #61dafb;
+      border-radius: 5px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    }
+    .card.selected {
+      transform: scale(1.2);
+      box-shadow: 0 0 15px currentColor;
+      border-color: gold;
+    }
+    .hearts {
+      border: 2px solid red;
+  }
+  .hearts.selected {
+    border: 2px solid pink;
+    background-color: #ffe4e1;
+  }
+    .diamonds {
+      border: 2px solid orange;
+  }
+  .diamonds.selected {
+    border: 2px solid orange;
+    background-color: #fff5e1;
+  }
+    .spades {
+     border: 2px solid lightblue;
+  }
+  .spades.selected{
+    border: 2px solid lightblue;
+    background-color: #e1ffff;
+  }
+    .clubs {
+     border: 2px solid lightgreen;
+  }
+  .clubs.selected{
+   border: 2px solid lightgreen;
+   background-color: #e1ffe1;
+  }
+    .animation-play {
+      animation: play-animation 0.5s forwards;
+    }
+    @keyframes play-animation {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+    }
+    .joker {
+      background-color: red;
+      color: white;
+      font-weight: bold;
+    }
+    
+    
+    /* wavy menu text */
+    
+    .wave-text span {
+    display: inline-block;
+    font-size: 4rem;
+    animation: wave 4.8s ease-in-out infinite;
+}
+
+.wave-text span:nth-child(1) {
+    animation-delay: 0s;
+}
+.wave-text span:nth-child(2) {
+    animation-delay: 0.4s;
+}
+.wave-text span:nth-child(3) {
+    animation-delay: 0.8s;
+}
+.wave-text span:nth-child(4) {
+    animation-delay: 1.2s;
+}
+.wave-text span:nth-child(5) {
+    animation-delay: 1.6s;
+}
+.wave-text span:nth-child(6) {
+    animation-delay: 2s;
+}
+.wave-text span:nth-child(7) {
+    animation-delay: 2.4s;
+}
+.wave-text span:nth-child(8) {
+    animation-delay: 2.8s;
+}
+.wave-text span:nth-child(9) {
+    animation-delay: 3.2s;
+}
+.wave-text span:nth-child(10) {
+    animation-delay: 3.6s;
+}
+.wave-text span:nth-child(11) {
+    animation-delay: 4s;
+}
+.wave-text span:nth-child(12) {
+    animation-delay: 4.4s;
+}
+
+@keyframes wave {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+  
+    #floating-card {
+  border: 1px solid #333;
+  border-radius: 10px;
+  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK-SNSF2Wdib97wjxySyuwJjCMRmWmM1UXug&s");
+  background-size:     cover;
+  background-repeat:   no-repeat;
+  background-position: center center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer; /* Change cursor to indicate it's draggable */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+  </style>
+</head>
+<body>
+<iframe id="shader-iframe" width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/XXjGDt?gui=false&t=10&paused=false&muted=false" allowfullscreen></iframe>
+
+
+
+<div class="content">
+  <!-- Main Menu -->
+  <div id="main-menu">
+  
+
+    <h1 class="wave-text">
+        <span>B</span><span>a</span><span>l</span><span><div id="floating-card" class="card" style="position: relative;">&nbsp;</div></span><span>t</span><span>r</span><span>o</span><span>&nbsp;</span><span>L</span><span>i</span><span>t</span><span>e</span>
+    </h1>
+    <button id="start-game">Start Game</button>
+    <button id="instructions">How to Play</button>
+    <button id="settings">Settings</button>
+    <p>High Score: <span id="high-score">0</span></p>
+  </div>
+  
+  <div id="settings-menu" class="hidden">
+  <button id="menu-music">Toggle Music</button>
+  <button id="menu">Back</button>
+  </div>
+
+  <!-- Game Area -->
+  <div id="game" class="hidden">
+    <!-- Blinds Selection -->
+    <div id="blinds">
+      <p>Select your blind:</p>
+      <button id="blind-1">Low Blind (x1)</button>
+      <button id="blind-2">Medium Blind (x2)</button>
+      <button id="blind-3">High Blind (x3)</button>
+    </div>
+    <!-- Game Board -->
+    <div id="game-board" class="hidden">
+      <div id="score-board">
+        <p>Score: <span id="score">0</span></p>
+      </div>
+      <div id="player-hand"></div>
+      <div id="action-buttons">
+        <button id="play-card">Play Selected Card</button>
+        <button id="sort-suit">Sort by Suit</button>
+        <button id="sort-rank">Sort by Rank</button>
+        <button id="discard-card">Discard</button>
+        <button id="shop-button">Shop</button>
+        <button id="end-game">End Game</button>
+      </div>
+    </div>
+  </div>
+<!-- Shop -->
+<div id="shop" class="hidden">
+<h2>Shop</h2>
+<p>Spend your points to but new cards: <br>Score: <span id="newScore"></span></p>
+<button id="buy-joker">Buy Joker (100 points)</button>
+<button id="buy-random">Buy a Random Card (50 points)</button>
+<button id="back-to-game">Back to Game</button>
+</div>
+
+  <script>
+  // maybe hide the shader gui
+  window.onload = function() {
+      // Get the iframe element
+      const iframe = document.getElementById("shader-iframe");
+
+      // Use a MutationObserver to detect when the iframe content is loaded
+      const observer = new MutationObserver(() => {
+        iframe.contentWindow.document.getElementById('playerBar').className.add("isNotVisible");
+      });
+
+      observer.observe(iframe, { childList: true, subtree: true });
+    };
+  
+  
+  
+  //draggable menu card
+  document.addEventListener("DOMContentLoaded", () => {
+  const card = document.getElementById('floating-card');
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  // Mouse down event to start dragging
+  card.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    // Store the initial mouse position and card position
+    offsetX = e.clientX - card.offsetLeft;
+    offsetY = e.clientY - card.offsetTop;
+    
+    // Set the cursor to 'grabbing' to indicate dragging
+    card.style.cursor = 'grabbing';
+
+    // Prevent default action to avoid text selection while dragging
+    e.preventDefault();
+  });
+
+  // Mouse move event to move the card
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      // Update the position of the card based on mouse movement
+      const left = e.clientX - offsetX;
+      const top = e.clientY - offsetY;
+      card.style.left = `${left}px`;
+      card.style.top = `${top}px`;
+    }
+  });
+
+  // Mouse up event to stop dragging
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      card.style.cursor = 'pointer'; // Reset the cursor to the default state
+    }
+  });
+});
+
+  
+  
+  
+  
+  
+  
+  
+  
+    // Game Variables
+    let deck = [];
+    let playerHand = [];
+    let score = 0;
+    let scoreMultiplier = 1;
+
+    // Utility Functions
+    function shuffleDeck(deck) {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+    }
+
+    function createDeck() {
+      const suits = ["hearts", "diamonds", "clubs", "spades"];
+      const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+      const jokers = [
+        { suit: "joker", value: "Red Joker", effect: "boostScore" },
+        { suit: "joker", value: "Black Joker", effect: "forceDiscard" },
+      ];
+      let newDeck = [];
+
+      suits.forEach(suit => {
+        values.forEach(value => {
+          newDeck.push({ suit, value });
+        });
+      });
+
+      return newDeck.concat(jokers);
+    }
+
+    function updateScoreBoard(newScore) {
+      document.getElementById("score").textContent = newScore;
+    }
+
+    function renderPlayerHand(hand) {
+  const handContainer = document.getElementById("player-hand");
+  handContainer.innerHTML = "";
+
+  hand.forEach((card, index) => {
+    if (!card) return;
+    const cardDiv = document.createElement("div");
+    cardDiv.classList.add("card");
+    cardDiv.setAttribute("data-index", index);
+
+    // Assign suit-based class
+    if (card.suit === "hearts") {
+      cardDiv.classList.add(card.suit); // Adds "hearts" or "diamonds"
+    } else if (card.suit === "diamonds") {
+      cardDiv.classList.add(card.suit);
+    } else if (card.suit === "spades") {
+      cardDiv.classList.add(card.suit);
+    } else if (card.suit === "clubs") {
+      cardDiv.classList.add(card.suit); // Adds "spades" or "clubs"
+    }
+
+    if (card.suit === "joker") {
+      cardDiv.classList.add("joker");
+      cardDiv.textContent = card.value;
+    } else {
+      cardDiv.classList.add(card.suit); // Adds suit-based classes
+      cardDiv.textContent = `${card.value} of ${card.suit}`;
+    }
+
+    cardDiv.addEventListener("click", () => selectCard(index));
+    handContainer.appendChild(cardDiv);
+  });
+}
+
+
+    function selectCard(index) {
+      const handContainer = document.getElementById("player-hand");
+      const cards = handContainer.getElementsByClassName("card");
+      const selectedCards = handContainer.getElementsByClassName("selected");
+
+      if (cards[index].classList.contains("selected")) {
+        cards[index].classList.remove("selected");
+      } else {
+        if (selectedCards.length < 5) {
+          cards[index].classList.add("selected");
+        } 
+      }
+    }
+
+    function drawCard() {
+      if (deck.length === 0) {
+        return null;
+        }
+      return deck.pop();
+    }
+
+    while (playerHand.length < 8) {
+      const newCard = drawCard();
+      if (!newCard) break;
+      playerHand.push(newCard);
+    }
+
+    function startGame() {
+      deck = createDeck();
+      shuffleDeck(deck);
+      score = 0;
+      playerHand = [];
+
+      for (let i = 0; i < 8; i++) {
+        playerHand.push(drawCard());
+      }
+
+//Menu Ace
+document.addEventListener("DOMContentLoaded", () => {
+  const balatroText = document.getElementById('balatro-text'); // The element containing "Balatro"
+  const letterA = balatroText.querySelector('span'); // Assume the "A" is wrapped in a <span>
+
+  const card = document.getElementById('floating-card');
+  
+  // Get position of the letter A
+  const rect = letterA.getBoundingClientRect();
+  
+  // Position the floating card based on the A's position
+  card.style.left = `${rect.left}px`;
+  card.style.top = `${rect.top - card.offsetHeight}px`; // Adjust vertical position slightly
+
+  // Continue with the drag functionality as before
+});
+
+
+
+
+
+
+
+
+
+      document.getElementById("blinds").classList.add("hidden");
+      document.getElementById("game-board").classList.remove("hidden");
+
+      updateScoreBoard(score);
+      renderPlayerHand(playerHand);
+    }
+
+    document.getElementById("start-game").addEventListener("click", () => {
+      document.getElementById("main-menu").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+      document.getElementById("blinds").classList.remove("hidden");
+    });
+
+    document.querySelectorAll("#blinds button").forEach(button => {
+      button.addEventListener("click", e => {
+        scoreMultiplier = parseInt(e.target.id.split("-")[1]);
+        startGame();
+      });
+    });
+
+    document.getElementById("play-card").addEventListener("click", () => {
+  const selectedCards = Array.from(document.querySelectorAll(".card.selected"));
+  if (selectedCards.length === 0) return alert("Please select at least one card!");
+
+  const selectedIndices = selectedCards.map(card => parseInt(card.getAttribute("data-index"), 10));
+  selectedIndices.sort((a, b) => b - a); // Sort in descending order
+
+  selectedIndices.forEach(index => {
+    const playedCard = playerHand.splice(index, 1)[0];
+    if (playedCard.suit === "joker") {
+      applyJokerEffect(playedCard);
+    } else {
+      score += calculateCardScore(playedCard);
+    }
+  });
+
+  while (playerHand.length < 8) {
+    playerHand.push(drawCard());
+  }
+
+  updateScoreBoard(score);
+  renderPlayerHand(playerHand);
+});
+
+
+    document.getElementById("discard-card").addEventListener("click", () => {
+  const selectedCards = Array.from(document.querySelectorAll(".card.selected"));
+  if (selectedCards.length === 0) return alert("Please select at least one card!");
+
+  const selectedIndices = selectedCards.map(card => parseInt(card.getAttribute("data-index"), 10));
+  selectedIndices.sort((a, b) => b - a); // Sort in descending order
+
+  selectedIndices.forEach(index => {
+    playerHand.splice(index, 1);
+  });
+
+  while (playerHand.length < 8) {
+    playerHand.push(drawCard());
+  }
+
+  renderPlayerHand(playerHand);
+});
+
+    
+    function calculateCardScore(card) {
+      if (!isNaN(card.value)) return parseInt(card.value) * scoreMultiplier;
+      if (card.value === "A") return 15 * scoreMultiplier;
+      return 10 * scoreMultiplier;
+    }
+
+    function applyJokerEffect(card) {
+      if (card.effect === "boostScore") {
+        score += 1000;
+        alert("Red Joker: You got 100 bonus points!");
+      } else if (card.effect === "forceDiscard") {
+        playerHand.pop();
+        alert("Black Joker: You were forced to discard a card!");
+      }
+    }
+
+//sort cards by suit
+    document.getElementById("sort-suit").addEventListener("click", () => {
+      playerHand.sort((a,b) => a.suit.localeCompare(b.suit));
+      renderPlayerHand(playerHand);
+    });
+    
+    //sort cards by rank
+    document.getElementById("sort-rank").addEventListener("click", () => {
+      const valueOrder = ["A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"];
+      playerHand.sort((a, b) => {
+        if (a.rank !== b.rank) return a.rank.localeCompare(b.rank);
+        return valueOrder.indexOf(a.value) - valueOrder.indexOf(b.value);
+      });
+      renderPlayerHand(playerHand);
+    });
+
+    document.getElementById("end-game").addEventListener("click", () => {
+      alert("Game Over! Final Score: " + score);
+      location.reload();
+    });
+    
+    
+        document.getElementById("settings").addEventListener ("click", () => {
+   document.getElementById("main-menu").classList.add("hidden");
+   document.getElementById("settings-menu").classList.remove("hidden");
+});
+
+document.getElementById("menu").addEventListener ("click", () => {
+ document.getElementById("settings-menu").classList.add("hidden");
+ document.getElementById("game").classList.add("hidden");
+ document.getElementById("blinds").classList.add("hidden");
+ document.getElementById("game-board").classList.add("hidden");
+ document.getElementById("main-menu").classList.remove("hidden");
+});
+
+const menuMusic = new Audio("/audio/balMenuMusic.mp3");
+let isPlaying = true;
+menuMusic.play();
+menuMusic.addEventListener("ended", () => {
+  menuMusic.currentTime = 0;
+  menuMusic.play();
+});
+document.getElementById("menu-music").addEventListener("click", () => {
+  if (isPlaying) {
+    menuMusic.pause();
+    menuMusic.currentTime = 0; // reset song to beginning
+    isPlaying = false;
+  } else {
+    menuMusic.play();
+    isPlaying = true;
+  }
+});
+
+    
+    
+    // shop shit
+    
+    document.getElementById("shop-button").addEventListener("click", () => {
+      document.getElementById("game").classList.add("hidden");
+      document.getElementById("shop").classList.remove("hidden");
+    });
+    
+    document.getElementById("back-to-game").addEventListener("click", () => {
+      document.getElementById("shop").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+    });
+    
+    document.getElementById("buy-joker").addEventListener("click", () => {
+      if (score >= 100) {
+        score -= 100;
+        playerHand.push({suit: "joker", value: "New Joker", effect: "boostScore" });
+        alert("You bought a Joker!");
+        updateScoreBoard(score);
+        renderPlayerHand(playerHand);
+      } else {
+        alert("Not enought points!");
+      }
+    });
+    
+    
+    
+    
+   
+
+    
+    
+    
+  </script>
+  </div>
+</body>
+</html>

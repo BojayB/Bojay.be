@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Balatro Lite</title>
+<style>
+  #hand { display: flex; }
+  .card { width: 50px; height: 70px; border: 1px solid black; margin: 5px; cursor: pointer; position: relative; transition: top 0.2s; }
+  .card.selected { top: -10px; }
+  #jokers {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.joker {
+    width: 80px;
+    height: 100px;
+    border: none; /* Remove border */
+    margin: 5px;
+    cursor: pointer;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+}
+.joker.selected {
+    border: 3px solid green; /* Add border back for selected effect */
+    box-sizing: border-box; /* Include border in element's total width and height */
+    padding: 2px;
+}
+.joker::before {
+    bottom: -40px; /* Position below the joker */
+}
+.joker:hover::before {
+    bottom: -30px; /* Move up slightly on hover */
+}
+
+    .card {
+    width: 71px; /* Standard card width */
+    height: 96px; /* Standard card height */
+    border: none; /* Remove border */
+    margin: 5px;
+    cursor: pointer;
+    position: relative;
+    transition: top 0.2s;
+    background-size: contain; /* Ensure image fits within the card */
+    background-repeat: no-repeat; /* Prevent image from tiling */
+    background-position: center; /* Center the image */
+}
+.card.selected { top: -10px; }
+}
+</style>
+</head>
+<body>
+
+<h1>Balatro Lite</h1>
+<div id="jokers">
+    <h2>Jokers</h2>
+</div>
+<div id="hand"></div>
+<button id="newDeckButton" onclick="newHand()">New Hand</button>
+<button onclick="playHand()">Play Hand</button>
+<button onclick="discardCards()">Discard Cards</button>
+<div id="score">Score: 0</div>
+
+<script>
+  const deck = [];
+  let hand = [];
+  let score = 0;
+  let handDealt = false;
+  let selectedCount = 0;
+  const jokers = {
+    "Joker": { description: "Mult +4", effect: (card) => card.value * 4 },
+    "Joker2": { description: "Doubles card value.", effect: (card) => card.value * 2 }
+  };
+
+  function createDeck() {
+    const suits = ["H", "D", "C", "S"];
+    const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
+    for (const suit of suits) {
+      for (const rank of ranks) {
+        deck.push({ rank: rank, suit: suit, value: getValue(rank) });
+      }
+    }
+    shuffle(deck);
+  }
+
+  function getValue(rank) {
+      if (isNaN(rank)) {
+          if (rank === 'A') return 14;
+          if (rank === 'K') return 13;
+          if (rank === 'Q') return 12;
+          if (rank === 'J') return 11;
+          if (rank === 'T') return 10;
+      } else {
+          return parseInt(rank);
+      }
+  }
+
+  function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+      }
+  }
+
+  function newHand() {
+    if (handDealt) return;
+
+    hand = [];
+    for (let i = 0; i < 8; i++) {
+        if (deck.length < 1) createDeck();
+        hand.push(deck.pop());
+    }
+    renderHand();
+    handDealt = true;
+    document.getElementById("newDeckButton").textContent = "New Round";
+  }
+
+ function renderHand() {
+    const handDiv = document.getElementById("hand");
+    handDiv.innerHTML = "";
+
+    hand.forEach(card => {
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "card";
+        cardDiv.dataset.cardIndex = hand.indexOf(card);
+        cardDiv.addEventListener("click", () => toggleCardSelection(cardDiv));
+        // Set the background image
+        cardDiv.style.backgroundImage = `url(images/${card.rank}${card.suit}.png)`;
+        handDiv.appendChild(cardDiv);
+    });
+}
+
+  function toggleCardSelection(cardDiv) {
+    if (cardDiv.classList.contains("selected")) {
+        cardDiv.classList.remove("selected");
+        selectedCount--;
+    } else if (selectedCount < 5) {
+        cardDiv.classList.add("selected");
+        selectedCount++;
+    }
+  }
+
+    function updateScore() {
+        let currentScore = 0;
+        hand.forEach(card => {
+            let cardValue = card.value;
+            const selectedJokers = document.querySelectorAll("#jokers .joker.selected");
+            selectedJokers.forEach(jokerDiv =>{
+                const jokerName = jokerDiv.dataset.jokerName;
+                cardValue = jokers[jokerName].effect(card);
+            })
+            currentScore += cardValue;
+        });
+        score = currentScore;
+        document.getElementById("score").textContent = "Score: " + score;
+    }
+
+function playHand() {
+    const playedCards = [];
+    for (let i = hand.length - 1; i >= 0; i--) {
+        const cardDiv = document.getElementById("hand").children[i];
+        if (cardDiv.classList.contains("selected")) {
+            playedCards.push(hand.splice(i, 1)[0]);
+        }
+    }
+
+    let playedScore = calculatePlayedScore(playedCards);
+    score += playedScore;
+    document.getElementById("score").textContent = "Score: " + score;
+    renderHand();
+    selectedCount = 0;
+    handDealt = false;
+    document.getElementById("newDeckButton").textContent = "New Hand";
+}
+function calculatePlayedScore(playedCards){
+    let playedScore = 0;
+    playedCards.forEach(card => {
+        let cardValue = card.value;
+        const selectedJokers = document.querySelectorAll("#jokers .joker.selected");
+        selectedJokers.forEach(jokerDiv =>{
+            const jokerName = jokerDiv.dataset.jokerName;
+            cardValue = jokers[jokerName].effect(card);
+        })
+        playedScore += cardValue;
+    });
+    return playedScore;
+}
+
+function discardCards() {
+    const cardsToDiscard = [];
+
+    const cardDivs = document.querySelectorAll("#hand .card");
+    cardDivs.forEach(cardDiv => {
+        if (cardDiv.classList.contains("selected")) {
+            const cardIndex = parseInt(cardDiv.dataset.cardIndex);
+            cardsToDiscard.push(cardIndex);
+        }
+    });
+
+    cardsToDiscard.sort((a, b) => b - a);
+
+    cardsToDiscard.forEach(index => {
+        hand.splice(index, 1);
+    });
+
+    renderHand();
+
+    while (hand.length < 8) {
+        if (deck.length < 1) createDeck();
+        hand.push(deck.pop());
+    }
+
+    renderHand();
+
+    selectedCount = 0;
+    updateScore();
+}
+
+function renderJokers() {
+    const jokersDiv = document.getElementById("jokers");
+    jokersDiv.innerHTML = "<h2>Jokers</h2>";
+
+    for (const jokerName in jokers) {
+        const joker = jokers[jokerName];
+        const jokerDiv = document.createElement("div");
+        jokerDiv.className = "joker";
+        jokerDiv.dataset.jokerName = jokerName;
+        jokerDiv.dataset.description = joker.description;
+        jokerDiv.style.backgroundImage = `url(images/jokers/${jokerName}.png)`; // Set background image
+        jokerDiv.addEventListener("click", () => toggleJokerSelection(jokerDiv));
+        jokersDiv.appendChild(jokerDiv);
+    }
+}
+
+function toggleJokerSelection(jokerDiv) {
+    jokerDiv.classList.toggle("selected");
+}
+
+renderJokers();
+document.getElementById("newDeckButton").textContent = "New Hand";
+</script>
+
+</body>
+</html>

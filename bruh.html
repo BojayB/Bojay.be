@@ -1,0 +1,162 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unleash Dormin</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: black;
+    }#dorminCanvas {
+  position: absolute;
+  width: 100%; height: 100%;
+  top: 0; left: 0;
+  z-index: 1;
+}
+
+.dormin-container {
+  position: relative;
+  z-index: 2;
+  font-family: 'Georgia', serif;
+  font-size: 3em;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.layer {
+  position: absolute;
+  top: 0; left: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.layer span {
+  display: inline-block;
+  will-change: transform, color, opacity;
+}
+
+.chaos1 span {
+  mix-blend-mode: lighten;
+}
+.chaos2 span {
+  mix-blend-mode: screen;
+}
+.main span {
+  color: #EFEFEFFA;
+  text-shadow: 0 0 8px #fff, 0 0 18px #0ff, 0 0 25px #f0f;
+}
+
+  </style>
+</head>
+<body>
+  <canvas id="dorminCanvas"></canvas>
+  <div class="dormin-container" id="dormin"></div>  <script>
+    // === Canvas shader-like background ===
+    const canvas = document.getElementById('dorminCanvas');
+    const ctx = canvas.getContext('2d');
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let time = 0;
+    function animateCanvas() {
+      const w = canvas.width;
+      const h = canvas.height;
+      time += 0.01;
+      const imageData = ctx.createImageData(w, h);
+      const d = imageData.data;
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = (y * w + x) * 4;
+          const v = 128 + 127 * Math.sin(x * 0.05 + time + y * 0.02)
+                             * Math.cos(y * 0.04 - time * 1.5);
+          d[i] = d[i+1] = d[i+2] = v * 0.1;
+          d[i+3] = 10;
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+      requestAnimationFrame(animateCanvas);
+    }
+    animateCanvas();
+
+    // === Text setup ===
+    const text = 'Awaken from this nightmare...'
+    const container = document.getElementById('dormin');
+    const layers = ['chaos1', 'chaos2', 'main'];
+    const spans = {};
+
+    layers.forEach(l => {
+      const div = document.createElement('div');
+      div.classList.add('layer', l);
+      spans[l] = [];
+      [...text].forEach(c => {
+        const span = document.createElement('span');
+        span.textContent = c;
+        div.appendChild(span);
+        spans[l].push(span);
+      });
+      container.appendChild(div);
+    });
+
+    function jitter(s, xa, ya, ra) {
+      const x = (Math.random() - 0.5) * xa;
+      const y = (Math.random() - 0.5) * ya;
+      const r = (Math.random() - 0.5) * ra;
+      s.style.transform = `translate(${x}px,${y}px) rotate(${r}deg)`;
+    }
+
+    function animateText(){
+      spans.chaos1.forEach(s => {
+        jitter(s, 10, 10, 4);
+        const h = (Date.now() / 10 + Math.random()*360) % 360;
+        s.style.color = `hsla(${h}, 80%, 60%, 0.7)`;
+      });
+      spans.chaos2.forEach(s => {
+        jitter(s, 10, 10, 4);
+        const h = (Date.now() / 12 + Math.random()*360) % 360;
+        s.style.color = `hsla(${h}, 80%, 60%, 0.7)`;
+      });
+      spans.main.forEach(s => {
+        jitter(s, 2, 2, 0.5);
+        const a = 0.8 + Math.random() * 0.2;
+        s.style.opacity = a;
+      });
+      requestAnimationFrame(animateText);
+    }
+    animateText();
+
+    // === Godlike melodic tones ===
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) {
+      const ctx = new AudioCtx();
+      const gain = ctx.createGain();
+      gain.gain.value = 0.05;
+      gain.connect(ctx.destination);
+
+      const freqs = [196, 264, 325]; // G3, C4, G4 — minor haunting triad
+
+      freqs.forEach(freq => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        osc.start();
+      });
+
+      document.body.addEventListener('click', () => {
+        if (ctx.state === 'suspended') ctx.resume();
+      });
+    }
+  </script></body>
+</html>
