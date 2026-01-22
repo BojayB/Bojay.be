@@ -85,7 +85,7 @@ hr {
 }
 
 a {
-  color: #8f6aff;
+  color: #7b50ff;
   text-decoration: none;
 }
 a:visited {
@@ -93,7 +93,7 @@ a:visited {
 }
 a:hover {
   
-  color: #7445ff;
+  color: #5c2af1;
   border-bottom: 1px solid #a384ff;
 }
 
