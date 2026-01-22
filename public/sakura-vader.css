@@ -47,8 +47,9 @@ h1 {
   color: #a384ff;
 }
 
-h1 a {
-  color: #8f6aff;
+h1 a:hover {
+  color: #5c2af1;
+  border-bottom: 1px solid #a384ff;
 }
 
 h2 {
@@ -92,7 +93,6 @@ a:visited {
   color: #603dca;
 }
 a:hover {
-  
   color: #5c2af1;
   border-bottom: 1px solid #a384ff;
 }
@@ -258,14 +258,6 @@ a.hdnlink{
   text-decoration: none;
   display: inline-block;
   border-bottom: none;
-}
-
-.footer { 
-  font-size: 16px;
-  color: rgb(209, 153, 235);
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
 }
 
 .joe {
