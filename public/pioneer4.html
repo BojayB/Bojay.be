@@ -18,7 +18,7 @@ const audioElement = document.querySelector("audio");
 const track = audioContext.createMediaElementSource(audioElement);
 const button = document.getElementsByTagName("button");
 let pioneerCount = 0;
-let pCnt = 1;
+let pCnt = 0;
 track.connect(audioContext.destination);
 
 // Select our play button
@@ -46,9 +46,6 @@ playButton.addEventListener("click", () => {
 
 audioElement.addEventListener('loadeddata', () => {
     let duration = audioElement.duration;
-    if (audioElement.currentTime === duration) {
-        audioElement.setAttribute('src', '../audio/pioneer0' + pCnt + '.wav');
-    }
 })
 
 //audioElement.addEventListener('ended', audioPlayback, false);
@@ -61,11 +58,10 @@ audioElement.addEventListener('loadeddata', () => {
 //}
 
 nextButton.addEventListener("click", () => {
-    if (audioElement.playing === true){
-    if (audioElement.src.endsWith('r0.wav')) {
-        
-
-    }}
+    ++pCnt;
+    if (audioElement.currentTime === audioElement.duration) {
+    } else 
+        audioElement.setAttribute('src', '../audio/pioneer0' + pCnt + '.wav');
 })
 
 
