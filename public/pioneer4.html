@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+</head>
+<body>
+
+<audio src="/audio/pioneer0.wav"></audio>
+
+<button data-playing="false" role="switch" aria-checked="false">
+    <span>play/pause</span>
+</button>
+
+<script>
+const audioContext = new AudioContext();
+const audioElement = document.querySelector("audio");
+const track = audioContext.createMediaElementSource(audioElement);
+
+track.connect(audioContext.destination);
+
+
+</script>
+</body>
+</html>
