@@ -45,7 +45,12 @@ playButton.addEventListener("click", () => {
 
 audioElement.addEventListener('ended', audioPlayback, false);
 function audioPlayback() {
-
+if (audioElement.src.endsWith('r0.wav')) {
+        audioElement.setAttribute('src', '../audio/pioneer01.wav');
+        audioContext.decodeAudioData();
+        audioElement.play();
+    } 
+audioElement.play();
 }
 
 nextButton.addEventListener("click", () => {
