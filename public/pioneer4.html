@@ -43,8 +43,16 @@ playButton.addEventListener("click", () => {
   }
 });
 
+audioElement.addEventListener('loadeddata', () => {
+    let duration = audioElement.duration;
+    if (audioElement.currentTime === duration) {
+        audioElement.play();
+    }
+})
+
 audioElement.addEventListener('ended', audioPlayback, false);
 function audioPlayback() {
+
 if (audioElement.src.endsWith('r0.wav')) {
         audioElement.setAttribute('src', '../audio/pioneer01.wav');
         audioContext.decodeAudioData();
@@ -54,11 +62,12 @@ audioElement.play();
 }
 
 nextButton.addEventListener("click", () => {
+    if (audioElement.playing === true){
     if (audioElement.src.endsWith('r0.wav')) {
-        audioElement.setAttribute('src', '../audio/pioneer01.wav');
+        audioElement.setAttribute('src', '../audio/pioneer02.wav');
         audioContext.decodeAudioData();
-        audioElement
-    }
+        audioElement.play();
+    }}
 })
 
 
