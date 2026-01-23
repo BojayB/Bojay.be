@@ -45,7 +45,6 @@ playButton.addEventListener("click", () => {
 });
 
 audioElement.addEventListener('loadeddata', () => {
-    let duration = audioElement.duration;
 })
 
 //audioElement.addEventListener('ended', audioPlayback, false);
@@ -58,11 +57,17 @@ audioElement.addEventListener('loadeddata', () => {
 //}
 
 nextButton.addEventListener("click", () => {
+    let cT = audioElement.currentTime;
+    let duration = audioElement.duration;
+    let tL = duration - cT;
     ++pCnt;
-    if (audioElement.currentTime === audioElement.duration) {
-    } else 
+    if (cT === duration) {
+    } else {
+        setTimeout(() => {   
         audioElement.setAttribute('src', '../audio/pioneer0' + pCnt + '.wav');
-})
+        audioElement.play();
+        }, tL);
+    }})
 
 
 
