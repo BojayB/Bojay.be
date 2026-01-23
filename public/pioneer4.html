@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<audio src="../audio/pioneer0.wav"></audio>
+<audio src="../audio/pioneer0.wav" loop="true"></audio>
 
 <button id="start" data-playing="false" role="switch" aria-checked="false">
     <span>play/pause</span>
@@ -55,18 +55,15 @@ function audioPlayback() {
 
 if (audioElement.src.endsWith('r0.wav')) {
         audioElement.setAttribute('src', '../audio/pioneer01.wav');
-        audioContext.decodeAudioData();
         audioElement.play();
     } 
-audioElement.play();
 }
 
 nextButton.addEventListener("click", () => {
     if (audioElement.playing === true){
     if (audioElement.src.endsWith('r0.wav')) {
         audioElement.setAttribute('src', '../audio/pioneer02.wav');
-        audioContext.decodeAudioData();
-        audioElement.play();
+
     }}
 })
 
