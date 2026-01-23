@@ -8,21 +8,26 @@
 
 <audio src="../audio/pioneer0.wav"></audio>
 
-<button data-playing="false" role="switch" aria-checked="false">
+<button id="start" data-playing="false" role="switch" aria-checked="false">
     <span>play/pause</span>
 </button>
-
+<button id="next">next part</button>
 <script>
 const audioContext = new AudioContext();
 const audioElement = document.querySelector("audio");
 const track = audioContext.createMediaElementSource(audioElement);
-
+const button = document.getElementsByTagName("button");
+let pioneerCount = 0;
 track.connect(audioContext.destination);
 
 // Select our play button
 const playButton = document.querySelector("button");
+const nextButton = document.querySelectorAll("button")[1];
 
 playButton.addEventListener("click", () => {
+    if (pioneerCount === 0) {
+        ++pioneerCount;
+    }
   // Check if context is in suspended state (autoplay policy)
   if (audioContext.state === "suspended") {
     audioContext.resume();
@@ -37,6 +42,23 @@ playButton.addEventListener("click", () => {
     playButton.dataset.playing = "false";
   }
 });
+
+audioElement.addEventListener('ended', audioPlayback, false);
+function audioPlayback() {
+
+}
+
+nextButton.addEventListener("click", () => {
+    if (audioElement.src.endsWith('r0.wav')) {
+        audioElement.setAttribute('src', '../audio/pioneer01.wav');
+        audioContext.decodeAudioData();
+        audioElement
+    }
+})
+
+
+
+
 
 </script>
 </body>
